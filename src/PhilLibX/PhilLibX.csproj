@@ -53,16 +53,7 @@
     <None Update="Native\x64\LibFlac.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Native\x64\LZOkay.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-	  <None Update="Native\x64\LZOkay.dll">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	  <None Update="Native\x64\MiniZ.dll">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Native\x86\LZOkay.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Native\x86\MiniZ.dll">

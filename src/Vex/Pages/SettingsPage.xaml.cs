@@ -43,7 +43,7 @@ namespace Vex.Pages
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Save("Settings.scfg");
+            Settings.Save("Settings.vcfg");
             reloadSettings();
             NavigationService.GoBack();
         }

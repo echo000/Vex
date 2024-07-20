@@ -53,7 +53,7 @@ namespace Vex.Pages
             InitializeComponent();
             DataContext = ViewModel;
             ViewModel.DimmerVisibility = Visibility.Hidden;
-            Instance.Settings = VexSettings.Load("Settings.scfg");
+            Instance.Settings = VexSettings.Load("Settings.vcfg");
 
             InitializeLogging();
 
@@ -165,7 +165,7 @@ namespace Vex.Pages
         /// </summary>
         public void ExportAssets(List<Asset> assets)
         {
-            Instance.Settings = VexSettings.Load("Settings.scfg");
+            Instance.Settings = VexSettings.Load("Settings.vcfg");
             var progressWindow = new ProgressWindow()
             {
                 Owner = Window.GetWindow(this),
@@ -485,7 +485,7 @@ namespace Vex.Pages
 
         public void ReloadSettings()
         {
-            Instance.Settings = VexSettings.Load("Settings.scfg");
+            Instance.Settings = VexSettings.Load("Settings.vcfg");
         }
 
         private void OpenAboutWindow(object sender, RoutedEventArgs e)

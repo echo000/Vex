@@ -217,7 +217,6 @@ namespace Vex.Library
         public uint BlendShapeWeightCount;
 
         //Reader Information
-        public CoDXAnimReader Reader;
         public Action<XAnim_t, PhilLibX.Media3D.Animation, VexInstance> ReaderFunction;
         public ulong ReaderInformationPointer;
 

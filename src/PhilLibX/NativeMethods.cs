@@ -68,28 +68,6 @@ namespace PhilLibX
 
         #endregion
 
-        #region LZO
-        internal enum LZOkayResult
-        {
-            LookbehindOverrun = -4,
-            OutputOverrun = -3,
-            InputOverrun = -2,
-            Error = -1,
-            Success = 0,
-            InputNotConsumed = 1,
-        }
-
-        const string LZOLibraryName = "LZOkay";
-
-        [LibraryImport(LZOLibraryName, EntryPoint = "LZOkayDecompress")]
-        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-        internal static partial int LZOkayDecompress(byte* dest, ref int destLen, byte* source, int sourceLen);
-
-        [LibraryImport(LZOLibraryName, EntryPoint = "LZOkayCompress")]
-        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-        internal static partial int LZOkayCompress(byte* dest, ref int destLen, byte* source, int sourceLen);
-        #endregion
-
         #region ZLIB
         internal enum MiniZReturnStatus
         {

@@ -52,7 +52,7 @@ namespace Vex.Library
                 else
                 {
                     using var reader = new BinaryReader(new FileStream(fileName, FileMode.Open, FileAccess.Read));
-                    if (reader.ReadUInt32() == 0x47464353)
+                    if (reader.ReadUInt32() == 0x47464356)
                     {
                         foreach (var prop in settings.GetType().GetProperties())
                         {
@@ -92,7 +92,7 @@ namespace Vex.Library
             try
             {
                 using var writer = new BinaryWriter(new FileStream(fileName, FileMode.Create));
-                writer.Write(0x47464353);
+                writer.Write(0x47464356);
                 foreach (var prop in GetType().GetProperties())
                 {
                     var value = prop.GetValue(this);
