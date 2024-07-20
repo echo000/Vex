@@ -332,6 +332,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
 src/.netcoredbg_hist
 src/Log.txt
 src/Settings.json

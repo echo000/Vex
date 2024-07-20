@@ -1,0 +1,22 @@
+﻿<Window x:Class="Vex.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Vex"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Title="Vex | About" Height="362" Width="573"
+        d:DesignHeight="356" d:DesignWidth="560">
+    <Grid>
+        <TextBlock FontSize="16" TextWrapping="Wrap" Margin="10,8,10,231" FontWeight="Bold">Vex - The Void Engine exporter.</TextBlock>
+        <TextBlock TextWrapping="Wrap" FontSize="13" Margin="10,54,10,45">
+            Developed by <Bold><Run Foreground="#ec34ca">echo000</Run></Bold> - with help from <Bold><Run Foreground="#3498ff">DTZxPorter</Run></Bold><LineBreak/><LineBreak/>
+            You must take note that EVERY asset exported using this tool is property of the game you extracted it from. Therefore you may not use them in any commercial environment and or profit off of them.<LineBreak/><LineBreak/>
+            Vex, is licensed under the General Public License 3.0. You may distribute it and use it under the terms of the GPL 3.0, however these tools are provided as-is with no warranty provided. <Bold><Underline>You are responsible for any damages caused.</Underline></Bold><Run Foreground="#0066ff">-- Changelog is available on the Github Repo --</Run>
+        </TextBlock>
+        <Button Name="GithubButton" Margin="8,0,0,8" Click="GithubButton_Click" VerticalAlignment="Bottom">Github</Button>
+        <Button Name="OkayButton" Margin="0,0,8,8" Click="OkayButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom">Okay</Button>
+    </Grid>
+</Window>

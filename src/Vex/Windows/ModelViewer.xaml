@@ -1,0 +1,55 @@
+﻿<Window x:Class="Vex.ModelViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
+        xmlns:local="clr-namespace:Vex" d:DataContext="{d:DesignInstance Type=local:ModelRenderViewModel}"
+        mc:Ignorable="d"
+        Title="Asset Preview" Height="510" Width="781"
+        MinHeight="510" MinWidth="781"
+        Topmost="False"
+        WindowStartupLocation="CenterOwner"
+        Unloaded="Window_Unloaded">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <local:ProgressView
+            x:Name="ProgressView"
+            Width="781"
+            Height="510" Visibility="Visible"/>
+        <hx:Viewport3DX x:Name="Viewport"
+                        EffectsManager="{Binding EffectsManager}"
+                        EnableMouseButtonHitTest="False"
+                        EnableDesignModeRendering="False"
+                        TitleSize="12"
+                        Title="{Binding StatusText}"
+                        SubTitleSize="12"
+                        TextBrush="White"
+                        EnableDeferredRendering="False"
+                        EnableRenderFrustum="True"
+                        Camera="{Binding Camera}"
+                        BackgroundColor="#FF262B32"
+                        IsPanEnabled="True"
+                        LeftRightPanSensitivity="0.1"
+                        UpDownPanSensitivity="0.1"
+                        UseDefaultGestures="False">
+            <hx:Viewport3DX.InputBindings>
+                <MouseBinding Command="hx:ViewportCommands.Rotate" Gesture="RightClick" />
+                <MouseBinding Command="hx:ViewportCommands.Pan" Gesture="MiddleClick" />
+            </hx:Viewport3DX.InputBindings>
+            <hx:DirectionalLight3D Direction="{Binding Camera.LookDirection}" Color="White" />
+            <hx:Element3DPresenter x:Name="Model" Content="{Binding ModelGroup}" IsHitTestVisible="False" />
+            <hx:LineGeometryModel3D
+                Color="#FF808080"
+                Geometry="{Binding Grid}"
+                Transform="{Binding GridTransform}"
+                Smoothness="2"
+                Thickness="1.0"
+                IsHitTestVisible="False" />
+        </hx:Viewport3DX>
+        <Image x:Name="Image" Visibility="Hidden"/>
+        <Label x:Name="Status" Content="{Binding StatusText}" FontSize="12" Visibility="Hidden" Margin="7,2,181,0" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Height="38" VerticalAlignment="Top" Grid.Column="1" FontWeight="Bold"/>
+    </Grid>
+</Window>

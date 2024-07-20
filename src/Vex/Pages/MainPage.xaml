@@ -1,0 +1,80 @@
+﻿<Page x:Class="Vex.Pages.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:vex="clr-namespace:Vex" d:DataContext="{d:DesignInstance Type=vex:MainViewModel}"
+      mc:Ignorable="d"
+      d:DesignHeight="510" d:DesignWidth="781"
+      Title="MainPage">
+
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="GridViewColumnTemplate">
+            <TextBlock Text="{Binding Path=DisplayName}" FontSize="14"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeColumnTemplate">
+            <TextBlock Text="{Binding Path=Type}" FontSize="14" Foreground="{Binding TypeForegroundColor}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StatusColumnTemplate">
+            <TextBlock Text="{Binding Path=Status}" FontSize="14" Foreground="{Binding StatusForegroundColor}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="InfoColumnTemplate">
+            <TextBlock Text="{Binding Path=InformationString, FallbackValue=N/A}" FontSize="14" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Label x:Name="TaskLabel" Content="0 assets loaded" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Top" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Height="38" Margin="395,5,11,0" FontSize="14"/>
+        <!-- Search Box -->
+        <TextBox Name="SearchBox"
+                 Text="{Binding Path=FilterString, UpdateSourceTrigger=PropertyChanged}" 
+                 Height="38" Margin="8,5,358,0"
+                 TextWrapping="NoWrap"
+                 Width="350"
+                 MinWidth="350"
+                 VerticalContentAlignment="Center"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top" FontSize="13"/>
+        <!-- Asset List -->
+        <ListView x:Name="AssetList"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionChanged="AssetListSelectionChanged"
+                  MouseDoubleClick="AssetListMouseDoubleClick" 
+                  VirtualizingStackPanel.IsVirtualizing="True" 
+                  VirtualizingStackPanel.VirtualizationMode="Recycling" 
+                  Margin="8,48,8,56"
+                  ItemsSource="{Binding Assets}"
+                  Background="{DynamicResource LayerOnAcrylicFillColorDefaultBrush}">
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Width="350" Header="Name" CellTemplate="{StaticResource GridViewColumnTemplate}"/>
+                    <GridViewColumn Width="100" Header="Type" CellTemplate="{StaticResource TypeColumnTemplate}"/>
+                    <GridViewColumn Width="150" Header="Status" CellTemplate="{StaticResource StatusColumnTemplate}"/>
+                    <GridViewColumn Width="250" Header="Info" CellTemplate="{StaticResource InfoColumnTemplate}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <!-- Side Bar Buttons -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="8,0,0,11" Width="500">
+            <Button x:Name="LoadFileButton" Content="Load File" ToolTip="Load a file from a supported game." Click="OpenFileClick" IsEnabled="{Binding AssetButtonsEnabled, FallbackValue=True}"/>
+            <Button x:Name="ExportSelectedButton" Content="Export Selected" ToolTip="Exports selected assets in the asset list." Click="ExportSelectedClick" IsEnabled="{Binding AssetButtonsEnabled, FallbackValue=True}" Margin="8,0,0,0"/>
+            <Button x:Name="ExportAllButton" Content="Export All"  ToolTip="Exports all listed assets in the asset list." Click="ExportAllClick" IsEnabled="{Binding AssetButtonsEnabled, FallbackValue=True}" Margin="8,0,0,0"/>
+            <Button x:Name="ClearAssetsButton" Content="Clear" ToolTip="Clear Assets" Click="ClearAllAssets" IsEnabled="{Binding AssetButtonsEnabled, FallbackValue=True}" Margin="8,0,0,0"/>
+        </StackPanel>
+        <Button x:Name="SettingsButton" Content="Settings" ToolTip="Open Settings" Click="OpenSettingsWindow" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,11"/>
+        <Button x:Name="AboutButton" Content="About" ToolTip="Open Settings" Click="OpenAboutWindow" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,90,11"/>
+        <!-- Dimmer -->
+        <Rectangle x:Name="Dimmer" Fill="{DynamicResource SmokeFillColorDefaultBrush}"  Visibility="{Binding DimmerVisibility, FallbackValue=Hidden}"/>
+    </Grid>
+</Page>
