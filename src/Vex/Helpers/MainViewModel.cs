@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ------------------------------------------------------------------------
-using Vex.Library;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Vex.Library;
 
 namespace Vex
 {

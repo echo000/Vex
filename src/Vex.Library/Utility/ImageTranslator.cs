@@ -1,10 +1,4 @@
-﻿using DirectXTex;
-using PhilLibX.IO;
-using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-
-namespace Vex.Library.Utility
+﻿namespace Vex.Library.Utility
 {
     // A list of supported image patch functions, applied on export
     public enum ImagePatch

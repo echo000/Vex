@@ -448,7 +448,7 @@ namespace Vex.Library
         public string Destination;
         public ulong ResourcePosition;
         public int CompressedSize;
-        public int dummy; 
+        public int dummy;
         public int unk;
         public int flag3;
         public short flag2;

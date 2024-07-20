@@ -1,14 +1,10 @@
-﻿using System;
-using PhilLibX.IO;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+﻿using PhilLibX;
 using PhilLibX.Compression;
-using PhilLibX;
-using System.Threading;
+using PhilLibX.IO;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Vex.Library.Package
 {
@@ -89,13 +85,13 @@ namespace Vex.Library.Package
         public List<Asset> ParseDishonoredResources()
         {
             var Assets = new List<Asset>();
-            for(var ci = 0; ci < Containers.Count; ci++)
+            for (var ci = 0; ci < Containers.Count; ci++)
             {
                 var container = Containers[ci];
                 using var stream = File.OpenRead(Path.Combine(container.Directory, container.Path));
                 using var Reader = new BinaryReader(stream);
                 var Magic = Reader.ReadBEInt32();
-                if(Magic != 0x05534552)
+                if (Magic != 0x05534552)
                     throw new Exception();
                 Reader.Advance(28);
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Vex.Library
@@ -29,7 +27,7 @@ namespace Vex.Library
             string Result = string.Empty;
 
             int index = (flags & 0x8000) != 0 ? Resources.Count - 1 : (int)(flags >> 2);
-            if(Resources.Count > index)
+            if (Resources.Count > index)
             {
                 Result = Resources[index];
             }

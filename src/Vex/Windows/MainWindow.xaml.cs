@@ -1,7 +1,7 @@
-﻿using Vex.Pages;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using Vex.Pages;
 
 namespace Vex
 {

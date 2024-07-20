@@ -1,12 +1,9 @@
 ﻿using PhilLibX;
-using PhilLibX.IO;
 using PhilLibX.Media3D.Translator;
-using Vex.Library.Package;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using Vex.Library.Package;
 
 namespace Vex.Library
 {
@@ -76,7 +73,7 @@ namespace Vex.Library
             switch (FileExt)
             {
                 case ".index":
-                    var DS2 = new DishonoredSupport();
+                    var DS2 = new VoidSupport();
                     Assets.AddRange(DS2.DishonoredMasterIndex(FileName));
                     LoadedGameFlags = GameFlags.Files;
                     break;

@@ -1,10 +1,9 @@
 ﻿using Microsoft.Win32;
-using Vex.Library;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Vex.Library;
 
 namespace Vex.Pages
 {

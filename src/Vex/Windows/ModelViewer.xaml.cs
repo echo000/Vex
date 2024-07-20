@@ -1,8 +1,6 @@
 ﻿using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
 using PhilLibX.Media3D;
-using Vex.Library;
-using Vex.Library.Utility;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Vex.Library;
+using Vex.Library.Utility;
 
 namespace Vex
 {

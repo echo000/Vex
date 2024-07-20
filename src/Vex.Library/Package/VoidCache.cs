@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Vex.Library.Package
 {
@@ -24,7 +18,7 @@ namespace Vex.Library.Package
 
             var Magic = Reader.ReadUInt32();
 
-            if(Magic != 0x04534552)
+            if (Magic != 0x04534552)
             {
                 return false;
             }

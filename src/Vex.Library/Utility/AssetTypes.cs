@@ -1,6 +1,6 @@
 ﻿using DirectXTex;
-using Vex.Library.Utility;
 using System.Collections.Generic;
+using Vex.Library.Utility;
 
 namespace Vex.Library
 {
