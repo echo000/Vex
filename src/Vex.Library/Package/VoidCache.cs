@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Vex.Library.Package
 {
-    internal class DishonoredCache : PackageCache
+    internal class VoidCache : PackageCache
     {
-        public DishonoredCache()
+        public VoidCache()
         {
         }
 

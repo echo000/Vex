@@ -57,7 +57,7 @@ namespace Vex.Pages
 
             InitializeLogging();
 
-/*            if (Instance.Settings.AutoUpdates)
+            if (Instance.Settings.AutoUpdates)
             {
                 try
                 {
@@ -75,7 +75,7 @@ namespace Vex.Pages
                 {
                     // Log(ex.Message, "ERROR");
                 }
-            }*/
+            }
         }
 
         /// <summary>

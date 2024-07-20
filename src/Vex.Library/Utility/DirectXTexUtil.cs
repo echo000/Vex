@@ -837,7 +837,7 @@ namespace DirectXTex
                 header.Flags |= DDSHeader.HeaderFlags.MIPMAP;
                 // Check size
                 if (metaData.MipLevels > UInt16.MaxValue)
-                    throw new ArgumentException(String.Format("Too many mipmaps: {0}. Max: {1}", metaData.MipLevels, UInt16.MaxValue));
+                    throw new ArgumentException($"Too many mipmaps: {metaData.MipLevels}. Max: {UInt16.MaxValue}");
                 // Set
                 header.MipMapCount = (uint)metaData.MipLevels;
                 // Check count
@@ -852,7 +852,7 @@ namespace DirectXTex
                     {
                         // Check size
                         if (metaData.Width > Int32.MaxValue)
-                            throw new ArgumentException(String.Format("Image Width too large: {0}. Max: {1}", metaData.Width, Int32.MaxValue));
+                            throw new ArgumentException($"Image Width too large: {metaData.Width}. Max: {Int32.MaxValue}");
                         // Set
                         header.Width = (uint)metaData.Width;
                         header.Height = header.Depth = 1;
@@ -863,10 +863,7 @@ namespace DirectXTex
                     {
                         // Check size
                         if (metaData.Width > Int32.MaxValue || metaData.Height > Int32.MaxValue)
-                            throw new ArgumentException(String.Format("Image Width and/or Height too large: {0}x{1}. Max: {2}",
-                                metaData.Width,
-                                metaData.Height,
-                                Int32.MaxValue));
+                            throw new ArgumentException($"Image Width and/or Height too large: {metaData.Width}x{metaData.Height}. Max: {Int32.MaxValue}");
                         // Set
                         header.Width = (uint)metaData.Width;
                         header.Height = (uint)metaData.Height;
@@ -878,13 +875,10 @@ namespace DirectXTex
                     {
                         // Check size
                         if (metaData.Width > Int32.MaxValue || metaData.Height > Int32.MaxValue)
-                            throw new ArgumentException(String.Format("Image Width and/or Height too large: {0}x{1}. Max: {2}",
-                                metaData.Width,
-                                metaData.Height,
-                                Int32.MaxValue));
+                            throw new ArgumentException($"Image Width and/or Height too large: {metaData.Width}x{metaData.Height}. Max: {Int32.MaxValue}");
                         // Check size
                         if (metaData.Depth > UInt16.MaxValue)
-                            throw new ArgumentException(String.Format("Image Depth too large: {0}. Max: {1}", metaData.Depth, UInt16.MaxValue));
+                            throw new ArgumentException($"Image Depth too large: {metaData.Depth}. Max: {UInt16.MaxValue}");
                         // Set
                         header.Flags |= DDSHeader.HeaderFlags.VOLUME;
                         header.Caps2 |= 0x00200000;
@@ -920,7 +914,7 @@ namespace DirectXTex
             {
                 // Check size
                 if (metaData.ArraySize > UInt16.MaxValue)
-                    throw new ArgumentException(String.Format("Array Size too large: {0}. Max: {1}", metaData.ArraySize, UInt16.MaxValue));
+                    throw new ArgumentException($"Array Size too large: {metaData.ArraySize}. Max: {UInt16.MaxValue}");
                 // Set Pixel format
                 header.PixelFormat = PixelFormats.DX10;
                 // Set Data

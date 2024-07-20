@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace Vex.Library.Package
 {
-    internal class DishonoredSupport
+    internal class VoidSupport
     {
         List<DishonoredContainer> Containers = [];
 

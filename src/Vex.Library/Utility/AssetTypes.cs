@@ -1,6 +1,5 @@
 ﻿using DirectXTex;
 using Vex.Library.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace Vex.Library
@@ -217,7 +216,6 @@ namespace Vex.Library
         public uint BlendShapeWeightCount;
 
         //Reader Information
-        public Action<XAnim_t, PhilLibX.Media3D.Animation, VexInstance> ReaderFunction;
         public ulong ReaderInformationPointer;
 
         public XAnim_t()

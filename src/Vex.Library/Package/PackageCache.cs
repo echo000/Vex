@@ -113,9 +113,7 @@ namespace Vex.Library
         public void SetLoadedState()
         {
 #if DEBUG
-            Debug.WriteLine(
-                string.Format("SetLoadedState(): Cache loaded {0} objects.", CacheObjects.Count)
-            );
+            Debug.WriteLine($"SetLoadedState(): Cache loaded {CacheObjects.Count} objects.");
 #endif
             // Set loading complete
             HasLoaded = true;
@@ -154,12 +152,7 @@ namespace Vex.Library
             return null;
         }
 
-        public virtual byte[] ExtractPackageObject(
-            string PackageName,
-            int AssetOffset,
-            int size,
-            VexInstance instance
-        )
+        public virtual byte[] ExtractPackageObject(string PackageName, int AssetOffset, int size, VexInstance instance)
         {
             return null;
         }
@@ -172,11 +165,6 @@ namespace Vex.Library
         public string GetPackagesPath()
         {
             return PackageFilesPath;
-        }
-
-        public virtual ulong HashPackageID(string value)
-        {
-            return 0;
         }
     }
 }
