@@ -4,19 +4,19 @@ using System.Runtime.InteropServices;
 namespace Vex.Library
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DishonoredResourceHeader
+    struct VoidResourceHeader
     {
         public int Magic;
         public short Version;
     }
 
-    struct DishonoredContainer
+    struct VoidContainer
     {
         public string Directory;
         public string Path;
         public List<string> Resources;
         public List<D2Entry> Entries;
-        public DishonoredContainer()
+        public VoidContainer()
         {
             Resources = [];
             Entries = [];

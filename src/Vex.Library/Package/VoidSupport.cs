@@ -10,17 +10,18 @@ namespace Vex.Library.Package
 {
     internal class VoidSupport
     {
-        List<DishonoredContainer> Containers = [];
+        List<VoidContainer> Containers = [];
 
         public List<Asset> DishonoredMasterIndex(string FilePath)
         {
             using var stream = File.OpenRead(FilePath);
             using var Reader = new BinaryReader(stream);
-            var Header = new DishonoredResourceHeader
+            var Header = new VoidResourceHeader
             {
                 Magic = Reader.ReadBEInt32(),
                 Version = Reader.ReadBEInt16()
             };
+
             if (Header.Magic != 0x04534552)
                 throw new Exception();
 
@@ -32,7 +33,7 @@ namespace Vex.Library.Package
                 {
                     var IndexName = Reader.ReadFixedPrefixString();
                     var ResourceName = Reader.ReadFixedPrefixString();
-                    var Container = new DishonoredContainer { Directory = Path.GetDirectoryName(FilePath), Path = IndexName };
+                    var Container = new VoidContainer { Directory = Path.GetDirectoryName(FilePath), Path = IndexName };
                     Container.Resources.Add(ResourceName);
                     Containers.Add(Container);
                     Trace.WriteLine($"Index: {IndexName}, Resource: {ResourceName}");
@@ -67,7 +68,7 @@ namespace Vex.Library.Package
                 var BaseDirectory = Path.GetDirectoryName(FilePath);
                 GetOodleDLL(BaseDirectory);
                 var IndexName = Reader.ReadFixedPrefixString();
-                var Container = new DishonoredContainer { Directory = BaseDirectory, Path = IndexName };
+                var Container = new VoidContainer { Directory = BaseDirectory, Path = IndexName };
                 Containers.Add(Container);
                 var ResourceCount = Reader.ReadBEInt16();
                 for (int i = 0; i < ResourceCount; i++)

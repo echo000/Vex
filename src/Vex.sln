@@ -3,12 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vex.Library", "Vex.Library\Vex.Library.csproj", "{FDD342BD-048F-43A0-A1FE-3F3652A424B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vex.Library", "Vex.Library\Vex.Library.csproj", "{E3C68499-EB9E-481A-A513-EDCAFE36F594}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vex", "Vex\Vex.csproj", "{B22834E4-7272-4955-89D0-0F95857E0AF1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{FDD342BD-048F-43A0-A1FE-3F3652A424B5} = {FDD342BD-048F-43A0-A1FE-3F3652A424B5}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vex", "Vex\Vex.csproj", "{FDE4CA6B-1A75-416C-82B2-662F4BDAE8CE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhilLibX", "PhilLibX\PhilLibX.csproj", "{0F468D5B-2F30-42F5-9043-920040D83D9D}"
 EndProject
@@ -18,14 +15,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FDD342BD-048F-43A0-A1FE-3F3652A424B5}.Debug|x64.ActiveCfg = Debug|x64
-		{FDD342BD-048F-43A0-A1FE-3F3652A424B5}.Debug|x64.Build.0 = Debug|x64
-		{FDD342BD-048F-43A0-A1FE-3F3652A424B5}.Release|x64.ActiveCfg = Release|x64
-		{FDD342BD-048F-43A0-A1FE-3F3652A424B5}.Release|x64.Build.0 = Release|x64
-		{B22834E4-7272-4955-89D0-0F95857E0AF1}.Debug|x64.ActiveCfg = Debug|x64
-		{B22834E4-7272-4955-89D0-0F95857E0AF1}.Debug|x64.Build.0 = Debug|x64
-		{B22834E4-7272-4955-89D0-0F95857E0AF1}.Release|x64.ActiveCfg = Release|x64
-		{B22834E4-7272-4955-89D0-0F95857E0AF1}.Release|x64.Build.0 = Release|x64
+		{E3C68499-EB9E-481A-A513-EDCAFE36F594}.Debug|x64.ActiveCfg = Debug|x64
+		{E3C68499-EB9E-481A-A513-EDCAFE36F594}.Debug|x64.Build.0 = Debug|x64
+		{E3C68499-EB9E-481A-A513-EDCAFE36F594}.Release|x64.ActiveCfg = Release|x64
+		{E3C68499-EB9E-481A-A513-EDCAFE36F594}.Release|x64.Build.0 = Release|x64
+		{FDE4CA6B-1A75-416C-82B2-662F4BDAE8CE}.Debug|x64.ActiveCfg = Debug|x64
+		{FDE4CA6B-1A75-416C-82B2-662F4BDAE8CE}.Debug|x64.Build.0 = Debug|x64
+		{FDE4CA6B-1A75-416C-82B2-662F4BDAE8CE}.Release|x64.ActiveCfg = Release|x64
+		{FDE4CA6B-1A75-416C-82B2-662F4BDAE8CE}.Release|x64.Build.0 = Release|x64
 		{0F468D5B-2F30-42F5-9043-920040D83D9D}.Debug|x64.ActiveCfg = Debug|x64
 		{0F468D5B-2F30-42F5-9043-920040D83D9D}.Debug|x64.Build.0 = Debug|x64
 		{0F468D5B-2F30-42F5-9043-920040D83D9D}.Release|x64.ActiveCfg = Release|x64

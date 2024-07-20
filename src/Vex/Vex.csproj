@@ -73,7 +73,10 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Vex.Library\Vex.Library.csproj" />
+	  <ProjectReference Include="..\Vex.Library\Vex.Library.csproj">
+	      <Project>{E3C68499-EB9E-481A-A513-EDCAFE36F594}</Project>
+	      <Name>Vex.Library</Name>
+	  </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
