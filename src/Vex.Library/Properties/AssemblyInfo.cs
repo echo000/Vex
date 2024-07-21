@@ -11,7 +11,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("echo000")]
 [assembly: AssemblyProduct("Vex.Library")]
-[assembly: AssemblyCopyright("Copyright © echo000 2023")]
+[assembly: AssemblyCopyright("Copyright © echo000 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

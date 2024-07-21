@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("echo000")]
 [assembly: AssemblyProduct("Vex")]
-[assembly: AssemblyCopyright("Copyright © echo000 2023")]
+[assembly: AssemblyCopyright("Copyright © echo000 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

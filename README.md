@@ -1,6 +1,6 @@
 # Vex
 
-Vex is an asset extractor various titles running on the Void Engine.
+Vex is an asset extractor for various titles running on the Void Engine.
 
 This is currently a WIP
 
@@ -30,8 +30,9 @@ This repo is in no shape or form associated with Activision and the developers. 
 
 ## Credits/Contributors
 
-* [echo000](https://github.com/echo000) - Developer and maintainer
+* [echo000](https://github.com/echo000) - Developer and Maintainer
 * [Scobalula](https://github.com/Scobalula) - Modified version of [PhilLibX](https://github.com/Scobalula/PhilLibX)
 * [DTZxPorter](https://github.com/dtzxporter/) - Help with Game Research
+* id-daemon - Game Research
 
 **If you use Vex in any of your projects, it would be highly appreciated if you credit the people/parties listed in the Credits list.**

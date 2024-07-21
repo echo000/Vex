@@ -9,62 +9,33 @@ namespace Vex.Library.Utility
     /// </summary>
     public class ExportManager
     {
-        public static void ExportModel(XModel_t GenericModel, string Name, VexInstance instance)
+        public static void ExportModel(Model Result, string Name, VexInstance instance)
         {
-            if (GenericModel == null)
-                return;
-
             var dir = Path.Combine(instance.ExportFolder, "Models", Name);
             var ImagesPath = instance.Settings.GlobalImages ? Path.Combine(Path.GetDirectoryName(dir), "_Images") : Path.Combine(dir, "_Images");
             var ImageRelativePath = instance.Settings.GlobalImages ? "..\\\\_Images\\\\" : "_Images\\\\";
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(ImagesPath);
-            foreach (var LOD in GenericModel.ModelLods)
+
+            if (Result != null)
             {
-                foreach (var material in LOD.Materials)
+                string format = "";
+                switch ((MdlExportFormat)instance.Settings.ModelExportFormat)
                 {
-                    var CompleteImagesPath = ImagesPath;
-                    var CompleteImageRelativePath = ImageRelativePath;
-                    ExportMaterialImages(material, CompleteImagesPath, instance);
-
-                    foreach (var image in material.Images)
-                    {
-                        image.ImageName = CompleteImageRelativePath + image.ImageName + instance.GetImageExportFormat();
-                    }
+                    case MdlExportFormat.XMODEL:
+                        format = ".xmodel_export";
+                        break;
+                    case MdlExportFormat.SEMODEL:
+                        format = ".semodel";
+                        break;
+                    case MdlExportFormat.CAST:
+                        format = ".cast";
+                        break;
                 }
-            }
-
-            if (instance.Settings.ExportLods)
-            {
-                var LodCount = GenericModel.ModelLods.Count;
-
-                for (int i = 0; i < LodCount; i++)
-                {
-                    var Result = new Model();
-
-                    if (Result != null)
-                    {
-                        Result.Name += $"_LOD{i}";
-                        string format = "";
-                        switch ((MdlExportFormat)instance.Settings.ModelExportFormat)
-                        {
-                            case MdlExportFormat.XMODEL:
-                                format = ".xmodel_export";
-                                break;
-                            case MdlExportFormat.SEMODEL:
-                                format = ".semodel";
-                                Result.Scale(2.54f);
-                                break;
-                            case MdlExportFormat.CAST:
-                                format = ".cast";
-                                Result.Scale(2.54f);
-                                break;
-                        }
-                        instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
-                    }
-                }
+                instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
             }
         }
+
 
         public static void ExportMaterialImages(XMaterial_t material, string ImagesPath, VexInstance instance)
         {

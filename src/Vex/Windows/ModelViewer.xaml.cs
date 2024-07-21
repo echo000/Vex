@@ -80,7 +80,6 @@ namespace Vex
 
         public static GroupModel3D CreateModel(Model model, Dictionary<string, XImageDDS> images = null)
         {
-            model.Scale(2.54f);
             var ModelGroup = new GroupModel3D();
             foreach (var Mesh in model.Meshes)
             {
