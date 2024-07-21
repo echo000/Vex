@@ -380,14 +380,10 @@ namespace Vex.Pages
                 ResetModelViewer();
                 try
                 {
-                    switch (asset)
+                    switch (asset.Type)
                     {
-                        case ModelAsset modelAsset:
-                            await LoadModelAsset(modelAsset);
-                            break;
-                        case ImageAsset:
-                        case MaterialAsset:
-                            await LoadImageAsset(asset);
+                        case AssetType.Model:
+                            await LoadModelAsset(asset);
                             break;
                     }
                 }
@@ -402,24 +398,22 @@ namespace Vex.Pages
             }
         }
 
-        private async Task LoadModelAsset(ModelAsset modelAsset)
+        private async Task LoadModelAsset(Asset modelAsset)
         {
-            List<string> mapStages = [$"Loading model: {modelAsset.Name}", "Loading Textures", "Preparing renderer"];
+            List<string> mapStages = [$"Loading model: {modelAsset.Name}", "Preparing renderer"];
             ModelViewer.Progress.SetProgressStages(mapStages);
 
             var model = await Task.Run(() => modelAsset.BuildPreview(Instance));
             ModelViewer.Progress.CompleteStage();
-            var imgs = Instance.Settings.LoadImagesModel ? await Task.Run(() => modelAsset.BuildPreviewImages(Instance)) : null;
-            ModelViewer.Progress.CompleteStage();
 
             Dispatcher.Invoke(() =>
             {
-                ModelViewer.LoadModel(model, imgs);
+                ModelViewer.LoadModel(model, null);
                 ModelViewer.ViewModel.StatusText = $"Status     : Loaded {modelAsset.DisplayName}";
-                ModelViewer.Viewport.SubTitle = $"Bones      : {model.Skeleton.Bones.Count}\n" +
+                ModelViewer.Viewport.SubTitle = //$"Bones      : {model.Skeleton.Bones.Count}\n" +
                                                 $"Vertices   : {model.GetVertexCount()}\n" +
-                                                $"Faces      : {model.GetFaceCount()}\n" +
-                                                $"Materials  : {model.Materials.Count}\n";
+                                                $"Faces      : {model.GetFaceCount()}\n";
+                                                //$"Materials  : {model.Materials.Count}\n";
                 ModelViewer.Viewport.Visibility = Visibility.Visible;
                 ModelViewer.Image.Visibility = Visibility.Hidden;
                 ModelViewer.Status.Visibility = Visibility.Hidden;

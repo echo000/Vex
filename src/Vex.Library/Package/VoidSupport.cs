@@ -1,19 +1,22 @@
 ﻿using PhilLibX;
 using PhilLibX.Compression;
 using PhilLibX.IO;
+using PhilLibX.Media3D;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Vex.Library.Utility;
 
 namespace Vex.Library.Package
 {
-    internal class VoidSupport
+    public class VoidSupport
     {
-        List<VoidContainer> Containers = [];
+        List<VoidContainer> Containers;
 
-        public List<Asset> DishonoredMasterIndex(string FilePath)
+        public List<Asset> VoidMasterIndex(string FilePath)
         {
+            Containers = [];
             using var stream = File.OpenRead(FilePath);
             using var Reader = new BinaryReader(stream);
             var Header = new VoidResourceHeader
@@ -119,6 +122,7 @@ namespace Vex.Library.Package
                     {
                         Entry.Status = AssetStatus.Loaded;
                         Entry.Type = AssetType.Model;
+                        Entry.BuildPreviewMethod = BuildPreviewDishonored;
                         Entry.LoadMethod = ExportAssetDishonored;
                         Entry.InformationString = $"{Entry.EntryType}";
                         Assets.Add(Entry);
@@ -166,6 +170,7 @@ namespace Vex.Library.Package
                         Entry.Status = AssetStatus.Loaded;
                         Entry.Type = AssetType.Model;
                         Entry.LoadMethod = ExportAssetDeathloop;
+                        Entry.BuildPreviewMethod = BuildPreviewDeathloop;
                         Entry.InformationString = $"{Entry.EntryType}";
                         Assets.Add(Entry);
                     }
@@ -186,9 +191,9 @@ namespace Vex.Library.Package
             var rawData = Reader.ReadBytes(Entry.CompressedSize);
             output = Entry.AssetSize != Entry.CompressedSize ? ZLIB.Decompress(rawData, (int)Entry.AssetSize) : rawData;
 
-            var dir = Path.Combine(instance.Settings.ExportDirectory, "Dishonored 2", "Model", Path.GetDirectoryName(Entry.Destination));
+            var dir = Path.Combine(instance.Settings.ExportDirectory, "Dishonored 2", "Model");
             Directory.CreateDirectory(dir);
-            var AssetPath = Path.Combine(instance.Settings.ExportDirectory, "Dishonored 2", "Model", Entry.Destination);
+            var AssetPath = Path.Combine(instance.Settings.ExportDirectory, "Dishonored 2", "Model", Path.GetFileName(Entry.Destination));
 
             File.WriteAllBytes(AssetPath, output);
         }
@@ -225,11 +230,65 @@ namespace Vex.Library.Package
                     output = ReadData;
                 }
             }
-            var dir = Path.Combine(instance.Settings.ExportDirectory, "Deathloop", "Model", Path.GetDirectoryName(Entry.Destination));
+            var dir = Path.Combine(instance.Settings.ExportDirectory, "Deathloop", "Model");
             Directory.CreateDirectory(dir);
-            var AssetPath = Path.Combine(instance.Settings.ExportDirectory, "Deathloop", "Model", Entry.Destination);
+            var AssetPath = Path.Combine(instance.Settings.ExportDirectory, "Deathloop", "Model", Path.GetFileName(Entry.Destination));
 
             File.WriteAllBytes(AssetPath, output);
+        }
+
+        public Model BuildPreviewDishonored(Asset asset, VexInstance instance)
+        {
+            var Entry = asset as D2Entry;
+            byte[] output;
+            var container = Containers[Entry.Container];
+            using var stream = File.OpenRead(Path.Combine(container.Directory, container.ResourcePath((ushort)Entry.flag2)));
+            using var Reader = new BinaryReader(stream);
+            Reader.Seek((long)Entry.ResourcePosition);
+            var rawData = Reader.ReadBytes(Entry.CompressedSize);
+            output = Entry.AssetSize != Entry.CompressedSize ? ZLIB.Decompress(rawData, (int)Entry.AssetSize) : rawData;
+
+            var model = ModelHelper.BuildDishonoredPreviewModel(output);
+
+            return model;
+        }
+
+        public Model BuildPreviewDeathloop(Asset asset, VexInstance instance)
+        {
+            var Entry = asset as D2Entry;
+            byte[] output = new byte[Entry.AssetSize];
+            var container = Containers[Entry.Container];
+            using var stream = File.OpenRead(Path.Combine(container.Directory, container.Resources[Entry.flag2]));
+            using var Reader = new BinaryReader(stream);
+            Reader.Seek((long)Entry.ResourcePosition);
+            byte[] ReadData;
+            var oodle = Reader.ReadFixedString(4);
+            if (oodle == "OOD")
+            {
+                var dummy = Reader.ReadInt32();
+                var xsize = Reader.ReadInt32();
+                var bytesToRead = Entry.CompressedSize - 12;
+                ReadData = Reader.ReadBytes(bytesToRead);
+                Oodle.Decompress(ReadData, 0, bytesToRead, output, 0, (int)Entry.AssetSize);
+            }
+            else
+            {
+                //Go back 4 bytes if not OOD
+                Reader.BaseStream.Position -= 4;
+                ReadData = Reader.ReadBytes(Entry.CompressedSize);
+                if (Entry.AssetSize != Entry.CompressedSize)
+                {
+                    ZLIB.Decompress(ReadData, 0, Entry.CompressedSize, output, 0, (int)Entry.AssetSize);
+                }
+                else
+                {
+                    output = ReadData;
+                }
+            }
+
+            var model = ModelHelper.BuildDeathloopPreviewModel(output);
+
+            return model;
         }
 
         public static void GetOodleDLL(string BaseDirectory)
@@ -244,6 +303,12 @@ namespace Vex.Library.Package
                 }
             }
             NativeMethods.SetOodleLibrary("oo2core_8_win64.dll");
+        }
+
+        public void Clear()
+        {
+            Containers.Clear();
+            Containers = null;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Vex.Library
         /// <summary>
         /// Game Cache
         /// </summary>
-        public PackageCache GameCache;
+        public VoidSupport VoidSupport;
 
         /// <summary>
         /// Gets or Sets the current game flags
@@ -48,11 +48,11 @@ namespace Vex.Library
         {
             LoadedGameFlags = GameFlags.None;
 
-            GameCache?.Dispose();
+            VoidSupport?.Clear();
             Assets?.Clear();
 
             Assets = null;
-            GameCache = null;
+            VoidSupport = null;
 
             NativeMethods.FreeOodleLibrary();
         }
@@ -73,8 +73,10 @@ namespace Vex.Library
             switch (FileExt)
             {
                 case ".index":
-                    var DS2 = new VoidSupport();
-                    Assets.AddRange(DS2.DishonoredMasterIndex(FileName));
+                    VoidSupport = new VoidSupport();
+                    Assets.AddRange(VoidSupport.VoidMasterIndex(FileName));
+                    //Maybe add the cache here instead of having cached files in the support itself
+                    //Alternatively, have a Void Support member inside this class
                     LoadedGameFlags = GameFlags.Files;
                     break;
                 default:

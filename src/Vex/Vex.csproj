@@ -22,7 +22,7 @@
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Greyhound2023.ico</ApplicationIcon>
+    <ApplicationIcon>GreyhoundEnhanced.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -43,6 +43,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="GreyhoundEnhanced.ico" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md">
       <Pack>True</Pack>

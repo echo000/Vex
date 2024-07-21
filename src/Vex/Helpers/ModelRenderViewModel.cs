@@ -57,6 +57,7 @@ namespace Vex
                 UpDirection = new Vector3D(0, 0, 1),
                 FieldOfView = 65,
                 NearPlaneDistance = 0.5,
+                FarPlaneDistance = 10000
             };
 
             var lb = new LineBuilder();
