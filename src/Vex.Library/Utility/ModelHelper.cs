@@ -193,89 +193,6 @@ namespace Vex.Library.Utility
             return ResultModel;
         }
 
-        public static Skeleton BuildDishonoredSkeleton(byte[] SkeletonBytes, bool Deathloop = false)
-        {
-            using var ModelStream = new MemoryStream(SkeletonBytes);
-            using var Reader = new BinaryReader(ModelStream);
-
-            var Magic = Reader.ReadFixedString(4);
-            if (Magic != "60SE")
-                throw new Exception();
-
-            var Skeleton = new Skeleton();
-
-            var SkeletonHeader = Reader.ReadStruct<VoidSkeleton>();
-            var transformOffset = SkeletonHeader.TransformOffset + 0x18;
-            var test = (transformOffset - Reader.BaseStream.Position) / 4;
-            var parent = Reader.ReadArray<VoidParents>((int)test);
-            var transforms = Reader.ReadArray<VoidTransforms>((int)SkeletonHeader.BoneCount);
-            Reader.Seek(SkeletonHeader.Data2Offset + 0x1c);
-            var udata2 = Reader.ReadArray<ushort>((int)SkeletonHeader.BoneCount);
-            if (Reader.BaseStream.Position > SkeletonHeader.Data2EndOffset + 0x2c)
-                throw new Exception();
-            Reader.Seek(SkeletonHeader.MainDataOffset + 0x30);
-            if (!Deathloop)
-            {
-                var t = Reader.ReadUInt32();
-            }
-            var matrices = new List<Matrix4x4>();
-
-            var SkeletonName = Reader.ReadFixedPrefixString();
-            Reader.Advance(6);
-            var Data3Count = Reader.ReadUInt16();
-            if(Data3Count > 0)
-            {
-                var unk = Reader.ReadArray<ushort>(Reader.ReadUInt16());
-                var Data3 = Reader.ReadArray<ushort>(Data3Count);
-            }
-            for(int i = 0; i < SkeletonHeader.BoneCount; i++)
-            {
-                Skeleton.Bones.Add(new(Reader.ReadFixedPrefixString())
-                {
-                    BaseLocalTranslation = transforms[i].Position,
-                    BaseLocalRotation = new Quaternion(transforms[i].Rotation.X, transforms[i].Rotation.Y, transforms[i].Rotation.Z, transforms[i].Rotation.W),
-                    BaseScale = transforms[i].Scale
-                });
-            }
-            for(int i = 0; i < (Deathloop ? 12 : 10); i++)
-            {
-                var boneflags = Reader.ReadBytes((int)SkeletonHeader.BoneCount);
-            }
-            var ZoneCount = Reader.ReadUInt16();
-            if (!Deathloop)
-            {
-                for (int i = 0; i < ZoneCount; i++)
-                {
-                    var ZoneName = Reader.ReadFixedPrefixString();
-                }
-                for (int i = 0; i < 10; i++)
-                {
-                    var zoneflags = Reader.ReadBytes(ZoneCount);
-                }
-            }
-            for (int i = 0; i < ((SkeletonHeader.BoneCount + 7) / 8) * 8; i++)
-            {
-                //This isn't actually used, as all of the transformations are
-                //inherantly in the bones and I'm yet to see an example that
-                //actually NEEDS this
-                var bytes = Reader.ReadBytes(4 * 3 * 4);
-                var floats = UnpackFloats(bytes);
-                // Construct the 4x4 matrix
-                var matrix = new Matrix4x4(
-                    floats[0], floats[4], floats[8], 0,
-                    floats[1], floats[5], floats[9], 0,
-                    floats[2], floats[6], floats[10], 0,
-                    floats[3], floats[7], floats[11], 1);
-            }
-            for(int i = 0; i < parent.Length; i++)
-            {
-                if (parent[i].test[1] != short.MaxValue)
-                    Skeleton.Bones[parent[i].test[0]].Parent = Skeleton.Bones[parent[i].test[1]];
-            }
-            Skeleton.GenerateGlobalTransforms();
-            return Skeleton;
-        }
-
         public static Model BuildDeathloopPreviewModel(byte[] ModelBytes, out string SkeletonPath)
         {
             using var ModelStream = new MemoryStream(ModelBytes);
@@ -446,6 +363,89 @@ namespace Vex.Library.Utility
                 ResultModel.Meshes[MaterialHeader.MeshId].Materials.Add(Material);
             }
             return ResultModel;
+        }
+
+        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes, bool Deathloop = false)
+        {
+            using var ModelStream = new MemoryStream(SkeletonBytes);
+            using var Reader = new BinaryReader(ModelStream);
+
+            var Magic = Reader.ReadFixedString(4);
+            if (Magic != "60SE")
+                throw new Exception();
+
+            var Skeleton = new Skeleton();
+
+            var SkeletonHeader = Reader.ReadStruct<VoidSkeleton>();
+            var transformOffset = SkeletonHeader.TransformOffset + 0x18;
+            var test = (transformOffset - Reader.BaseStream.Position) / 4;
+            var parent = Reader.ReadArray<VoidParents>((int)test);
+            var transforms = Reader.ReadArray<VoidTransforms>((int)SkeletonHeader.BoneCount);
+            Reader.Seek(SkeletonHeader.Data2Offset + 0x1c);
+            var udata2 = Reader.ReadArray<ushort>((int)SkeletonHeader.BoneCount);
+            if (Reader.BaseStream.Position > SkeletonHeader.Data2EndOffset + 0x2c)
+                throw new Exception();
+            Reader.Seek(SkeletonHeader.MainDataOffset + 0x30);
+            if (!Deathloop)
+            {
+                var t = Reader.ReadUInt32();
+            }
+            var matrices = new List<Matrix4x4>();
+
+            var SkeletonName = Reader.ReadFixedPrefixString();
+            Reader.Advance(6);
+            var Data3Count = Reader.ReadUInt16();
+            if (Data3Count > 0)
+            {
+                var unk = Reader.ReadArray<ushort>(Reader.ReadUInt16());
+                var Data3 = Reader.ReadArray<ushort>(Data3Count);
+            }
+            for (int i = 0; i < SkeletonHeader.BoneCount; i++)
+            {
+                Skeleton.Bones.Add(new(Reader.ReadFixedPrefixString())
+                {
+                    BaseLocalTranslation = transforms[i].Position,
+                    BaseLocalRotation = new Quaternion(transforms[i].Rotation.X, transforms[i].Rotation.Y, transforms[i].Rotation.Z, transforms[i].Rotation.W),
+                    BaseScale = transforms[i].Scale
+                });
+            }
+            for (int i = 0; i < (Deathloop ? 12 : 10); i++)
+            {
+                var boneflags = Reader.ReadBytes((int)SkeletonHeader.BoneCount);
+            }
+            var ZoneCount = Reader.ReadUInt16();
+            if (!Deathloop)
+            {
+                for (int i = 0; i < ZoneCount; i++)
+                {
+                    var ZoneName = Reader.ReadFixedPrefixString();
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    var zoneflags = Reader.ReadBytes(ZoneCount);
+                }
+            }
+            for (int i = 0; i < ((SkeletonHeader.BoneCount + 7) / 8) * 8; i++)
+            {
+                //This isn't actually used, as all of the transformations are
+                //inherantly in the bones and I'm yet to see an example that
+                //actually NEEDS this
+                var bytes = Reader.ReadBytes(4 * 3 * 4);
+                var floats = UnpackFloats(bytes);
+                // Construct the 4x4 matrix
+                var matrix = new Matrix4x4(
+                    floats[0], floats[4], floats[8], 0,
+                    floats[1], floats[5], floats[9], 0,
+                    floats[2], floats[6], floats[10], 0,
+                    floats[3], floats[7], floats[11], 1);
+            }
+            for (int i = 0; i < parent.Length; i++)
+            {
+                if (parent[i].test[1] != short.MaxValue)
+                    Skeleton.Bones[parent[i].test[0]].Parent = Skeleton.Bones[parent[i].test[1]];
+            }
+            Skeleton.GenerateGlobalTransforms();
+            return Skeleton;
         }
 
         private static float[] UnpackFloats(byte[] bytes)

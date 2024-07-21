@@ -209,7 +209,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractDishonoredPackageObject(SkeletonEntry);
                     //Improve this
-                    var skeleton = ModelHelper.BuildDishonoredSkeleton(SkeletonBytes);
+                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes);
                     model.Skeleton = skeleton;
                 }
             }
@@ -230,7 +230,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractDeathloopPackageObject(SkeletonEntry);
                     //Improve this
-                    var skeleton = ModelHelper.BuildDishonoredSkeleton(SkeletonBytes, true);
+                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, true);
                     model.Skeleton = skeleton;
                 }
             }
