@@ -83,7 +83,7 @@ namespace Vex.Library.Utility
 
         public static void ExportBImage(BImage Image, string OutputFile, ImagePatch Patch, VexInstance instance)
         {
-            using var scratchImage = ImageHelper.ConvertBImage(Image);
+            using var scratchImage = ImageHelper.ConvertBImage(Image, Patch);
             switch ((ImgExportFormat)instance.Settings.ImageExportFormat)
             {
                 case ImgExportFormat.TGA:
