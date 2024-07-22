@@ -448,15 +448,23 @@ namespace Vex.Library.Utility
                 m_depth = Reader.ReadUInt32();
                 m_minNumLevels = Reader.ReadUInt32();
                 m_maxNumLevels = Reader.ReadUInt32();
-                m_arraySize = Reader.ReadUInt32();
-                m_flags = Reader.ReadUInt16();
+                if (version == SUPPORTED_IMAGEOPTS_VERSION_DH)
+                {
+                    m_arraySize = Reader.ReadUInt32();
+                    m_flags = Reader.ReadUInt16();
+                }
+                else
+                {
+                    Reader.Advance(4);
+                    m_arraySize = Reader.ReadUInt32();
+                    m_flags = Reader.ReadUInt16();
+                }
             }
         }
 
         [System.Diagnostics.DebuggerDisplay("Mip {m_MipLevel.ToString( \"G4\" )} {m_Width.ToString( \"G4\" )}x{m_Height.ToString( \"G4\" )} Slice {m_SliceIndex.ToString( \"G4\" )} Size={m_Content.Length}")]
         public class ImageSlice
         {
-
             public BImage m_Owner = null;
 
             public uint m_MipLevel;
@@ -470,6 +478,16 @@ namespace Vex.Library.Utility
             {
                 m_Owner = _Owner;
                 Read(_R, _MipOffset);
+            }
+
+            public ImageSlice(BImage _Owner, byte[] bytes, int _MipOffset, uint width, uint height)
+            {
+                m_Owner = _Owner;
+                m_MipLevel = (uint)_MipOffset;
+                m_SliceIndex = 0;
+                m_Width = width;
+                m_Height = height;
+                m_Content = bytes;
             }
 
             public void Read(BinaryReader Reader, uint _MipOffset)
@@ -511,7 +529,7 @@ namespace Vex.Library.Utility
             {
                 m_Magic = Reader.ReadUInt32();
                 if (m_Magic != MAGIC)
-                    throw new Exception("Image has out of date magic!");
+                    throw new Exception("Image has unsupported magic!");
             }
 
             m_Opts.Read(Reader);
@@ -525,12 +543,23 @@ namespace Vex.Library.Utility
                 // This means the largest mips are stored elsewhere, for streaming purpose...
                 var ImageMips = instance.VoidSupport.GetImageMipEntries(AssetName + "_mip", instance);
                 ImageMips.Sort((entry1, entry2) => string.CompareOrdinal(entry1.Name, entry2.Name));
-                foreach (var MipFileName in ImageMips)
+                for (int i = 0; i < ImageMips.Count; i++)
                 {
-                    var bytes = instance.VoidSupport.ExtractEntry(MipFileName, instance);
-                    using var MipS = new MemoryStream(bytes);
-                    using var MipR = new BinaryReader(MipS);
-                    Slices.Add(new ImageSlice(this, MipR, 0U));
+                    if (instance.Game == SupportedGames.Dishonored2)
+                    {
+                        var bytes = instance.VoidSupport.ExtractEntry(ImageMips[i], instance);
+                        using var MipS = new MemoryStream(bytes);
+                        using var MipR = new BinaryReader(MipS);
+                        Slices.Add(new ImageSlice(this, MipR, 0U));
+                    }
+                    //This is REALLY hacky but because of the way that _mip* files are stored in Deathloop
+                    //They don't have any header data, its only image data, so we have to work out the width and height
+                    //based on the mip level
+                    else
+                    {
+                        var bytes = instance.VoidSupport.ExtractEntry(ImageMips[i], instance);
+                        Slices.Add(new ImageSlice(this, bytes, i, m_Opts.m_maxWidth / (uint)(i + 1), m_Opts.m_maxHeight / (uint)(i + 1)));
+                    }
                 }
             }
 
@@ -544,7 +573,6 @@ namespace Vex.Library.Utility
                 if (mipsCountInFile != mipsCountTotal)
                     throw new Exception("Min & Max mips count are the same! Can't compute depth reduction on texture 3D!");
 
-                // ARKANE: bmayaux (2013-07-15) We need to account for depth reduction with each new mip level...
                 totalSlicesInFile = 0;
                 uint depth = m_Opts.m_depth;
                 for (int mipLevelIndex = 0; mipLevelIndex < mipsCountInFile; mipLevelIndex++)
@@ -553,10 +581,23 @@ namespace Vex.Library.Utility
                     depth = Math.Max(1, depth >> 1);
                 }
             }
+            else if (m_Opts.m_type == ImageOptions.TYPE.TT_CUBIC)
+            {
+                totalSlicesInFile = mipsCountInFile * 6;
+            }
 
             uint mipOffset = (uint)Slices.Count;
             if (instance.Game == SupportedGames.Dishonored2)
-                Reader.Advance(4 * 1);
+            {
+                Reader.Advance(4);
+            }
+            else
+            {
+                Reader.Advance(1);
+                var unk1 = Reader.ReadUInt32();
+                var unk2 = Reader.ReadUInt32();
+            }
+        
             for (uint i = 0; i < totalSlicesInFile; i++)
                 Slices.Add(new ImageSlice(this, Reader, mipOffset));
 
