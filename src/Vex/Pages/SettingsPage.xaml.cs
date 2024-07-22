@@ -58,7 +58,6 @@ namespace Vex.Pages
             ModelExport.ClearValue(ComboBox.SelectedIndexProperty);
             AnimExport.ClearValue(ComboBox.SelectedIndexProperty);
             ImageExport.ClearValue(ComboBox.SelectedIndexProperty);
-            AudioExport.ClearValue(ComboBox.SelectedIndexProperty);
 
             // Clear the DataContext if necessary
             DataContext = null;

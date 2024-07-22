@@ -1,5 +1,5 @@
 ﻿using PhilLibX.Audio;
-using System.IO;
+using System;
 
 namespace Vex.Library
 {
@@ -43,32 +43,9 @@ namespace Vex.Library
             return ConversionResult;
         }
 
-        public static bool ExportSoundAsset(XSound Sound, string SoundPath, string AssetName, VexInstance instance)
+        public static bool ExportSoundAsset(string SoundPath, string AssetName, VexInstance instance)
         {
-            var AudioExportFormat = (SoundExportFormat)instance.Settings.AudioExportFormat;
-            Directory.CreateDirectory(SoundPath);
-
-            var OutFormat = AudioExportFormat switch
-            {
-                SoundExportFormat.WAV => SoundFormat.Standard_WAV,
-                SoundExportFormat.FLAC => SoundFormat.Standard_FLAC,
-                _ => SoundFormat.Standard_WAV,
-            };
-
-            var FileName = Path.Combine(SoundPath, AssetName + instance.GetAudioExportFormat());
-
-            if ((AudioExportFormat == SoundExportFormat.WAV && Sound.DataType == SoundDataTypes.WAV_WithHeader) || (AudioExportFormat == SoundExportFormat.FLAC && Sound.DataType == SoundDataTypes.FLAC_WithHeader))
-            {
-                File.WriteAllBytes(FileName, Sound.DataBuffer);
-            }
-            else
-            {
-                var InFormat = (Sound.DataType == SoundDataTypes.FLAC_WithHeader) ? SoundFormat.FLAC_WithHeader : SoundFormat.WAV_WithHeader;
-                //CONVERT
-                return ConvertSoundMemory(Sound.DataBuffer, Sound.DataSize, InFormat, FileName, OutFormat);
-            }
-
-            return false;
+            throw new NotImplementedException();
         }
     }
 }

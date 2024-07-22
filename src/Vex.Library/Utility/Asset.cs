@@ -1,13 +1,12 @@
 ﻿using PhilLibX.Cryptography.Hash;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
 
 namespace Vex.Library
 {
 
-    public enum AssetType
+    public enum AssetType : byte
     {
         Animation,
         Image,
@@ -18,7 +17,7 @@ namespace Vex.Library
         Unknown
     }
 
-    public enum AssetStatus
+    public enum AssetStatus : byte
     {
         Loaded,
         Exported,
@@ -324,121 +323,6 @@ namespace Vex.Library
         }
     }
 
-    public class AnimationAsset : Asset
-    {
-        public float Framerate { get; set; }
-        public int FrameCount { get; set; }
-        public int BoneCount { get; set; }
-        public int ShapeCount { get; set; }
-        public bool IsSiegeAnim { get; set; }
-
-        public AnimationAsset()
-        {
-            Framerate = 30.0f;
-            FrameCount = 0;
-            BoneCount = 0;
-            ShapeCount = 0;
-            Type = AssetType.Animation;
-            AssetSize = -1;
-            IsSiegeAnim = false;
-        }
-    }
-
-    public class ModelAsset : Asset
-    {
-        public int BoneCount { get; set; }
-        public int CosmeticBoneCount { get; set; }
-        public int LodCount { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the method to load the Asset data
-        /// </summary>
-        public Func<Asset, VexInstance, Dictionary<string, XImageDDS>> GetModelImages { get; set; }
-
-        /// <summary>
-        /// Saves the Asset
-        /// </summary>
-        public virtual Dictionary<string, XImageDDS> BuildPreviewImages(VexInstance instance)
-        {
-            return GetModelImages?.Invoke(this, instance);
-        }
-
-        public ModelAsset()
-        {
-            BoneCount = 0;
-            CosmeticBoneCount = 0;
-            LodCount = 0;
-            Type = AssetType.Model;
-            AssetSize = -1;
-        }
-    }
-
-    public class ImageAsset : Asset
-    {
-        public short Width { get; set; }
-        public short Height { get; set; }
-        public short Format { get; set; }
-
-        public ImageAsset()
-        {
-            Width = 0;
-            Height = 0;
-            Format = 0;
-            Type = AssetType.Image;
-            AssetSize = -1;
-        }
-    }
-
-    public class RawFileAsset : Asset
-    {
-        public string RawFilePath { get; set; }
-        public long RawDataPointer { get; set; }
-
-        public RawFileAsset()
-        {
-            RawFilePath = String.Empty;
-            RawDataPointer = 0;
-            Type = AssetType.RawFile;
-            AssetSize = -1;
-        }
-    }
-
-    public class AudioAsset : Asset
-    {
-        public string FullPath { get; set; }
-        public int FrameRate { get; set; }
-        public int FrameCount { get; set; }
-        public byte ChannelsCount { get; set; }
-        public int Length { get; set; }
-        public short PackageIndex { get; set; }
-        public bool IsLocalized { get; set; }
-        public SoundDataTypes DataType { get; set; }
-
-        public AudioAsset()
-        {
-            FullPath = String.Empty;
-            FrameRate = 0;
-            FrameCount = 0;
-            ChannelsCount = 0;
-            PackageIndex = 0;
-            Length = 0;
-            IsLocalized = false;
-            DataType = SoundDataTypes.WAV_WithHeader;
-            Type = AssetType.Sound;
-            AssetSize = -1;
-        }
-    }
-
-    public class MaterialAsset : Asset
-    {
-        public int ImageCount { get; set; }
-        public MaterialAsset()
-        {
-            ImageCount = 0;
-            Type = AssetType.Material;
-        }
-    }
-
     public class D2Entry : Asset
     {
         public int Container;
@@ -466,20 +350,6 @@ namespace Vex.Library
             unk = 0;
             flag2 = 0;
         }
-    }
-
-    public class DeathloopEntry : Asset
-    {
-        public int Container;
-        public uint Id;
-        public string EntryType;
-        public string ShortName;
-        public string Destination;
-        public long ResourcePosition;
-        public int sizePacked;
-        public int dummy;
-        public int unk;
-        public short archive;
     }
 
     public static class AssetTypeExtensions

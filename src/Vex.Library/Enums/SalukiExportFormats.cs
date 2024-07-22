@@ -1,6 +1,6 @@
 ﻿namespace Vex.Library
 {
-    public enum ImgExportFormat
+    public enum ImgExportFormat : byte
     {
         DDS = 0,
         PNG = 1,
@@ -8,7 +8,7 @@
         TGA = 3
     }
 
-    public enum MdlExportFormat
+    public enum MdlExportFormat : byte
     {
         SEMODEL,
         XMODEL,
@@ -19,13 +19,13 @@
         XNA
     }
 
-    public enum SoundExportFormat
+    public enum SoundExportFormat : byte
     {
         WAV,
         FLAC
     }
 
-    public enum AnimExportFormat
+    public enum AnimExportFormat : byte
     {
         CAST,
         SEANIM,

@@ -32,7 +32,6 @@
                                 <CheckBox IsChecked="{Binding Path=LoadImages}">Load Images</CheckBox>
                             </StackPanel>
                             <StackPanel Margin="174,10,10,10">
-                                <CheckBox IsChecked="{Binding Path=LoadSounds}">Load Sounds</CheckBox>
                                 <CheckBox IsChecked="{Binding Path=LoadMaterials}">Load Materials</CheckBox>
                             </StackPanel>
                         </Grid>
@@ -72,12 +71,6 @@
                                         <ComboBoxItem Content="TGA"/>
                                     </ComboBox>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="Audio Format" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
-                                    <ComboBox x:Name="AudioExport" SelectedIndex="{Binding Path=AudioExportFormat}" VerticalAlignment="Top">
-                                        <ComboBoxItem Content="WAV"/>
-                                        <ComboBoxItem Content="FLAC"/>
-                                    </ComboBox>
-                                </HeaderedContentControl>
                             </StackPanel>
                         </Grid>
                     </GroupBox>
@@ -90,15 +83,14 @@
                             <CheckBox IsChecked="{Binding Path=GlobalImages}">Use Global Images Folder</CheckBox>
                             <CheckBox IsChecked="{Binding Path=ExportLods}">Export all available LODs</CheckBox>
                             <CheckBox IsChecked="{Binding Path=ExportHitbox}">Export Model Hitbox</CheckBox>
-                            <CheckBox IsChecked="{Binding Path=ExportVertexColor}">Export Vertex Colors</CheckBox>
+
                         </StackPanel>
                         <StackPanel Margin="300,10,10,10">
                             <CheckBox IsChecked="{Binding Path=ExportModelImages}">Export Images With Models</CheckBox>
                             <CheckBox IsChecked="{Binding Path=MaterialModelFolders}">Export Images into Material Folders</CheckBox>
                             <CheckBox IsChecked="{Binding Path=PatchNormals}">Rebuild Normal Maps</CheckBox>
                             <CheckBox IsChecked="{Binding Path=PatchColor}">Rebuild Colour Maps</CheckBox>
-                            <CheckBox IsChecked="{Binding Path=AudioLanguageFolders}">Preserve Sound File Paths</CheckBox>
-                            <CheckBox IsChecked="{Binding Path=SkipBlankAudio}">Skip Blank Audio</CheckBox>
+                            <CheckBox IsChecked="{Binding Path=AudioLanguageFolders}">Preserve File Paths</CheckBox>
                         </StackPanel>
                     </Grid>
                 </GroupBox>

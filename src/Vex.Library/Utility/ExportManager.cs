@@ -80,5 +80,25 @@ namespace Vex.Library.Utility
                     break;
             }
         }
+
+        public static void ExportBImage(BImage Image, string OutputFile, ImagePatch Patch, VexInstance instance)
+        {
+            using var scratchImage = ImageHelper.ConvertBImage(Image);
+            switch ((ImgExportFormat)instance.Settings.ImageExportFormat)
+            {
+                case ImgExportFormat.TGA:
+                    scratchImage.SaveToTGAFile(0, OutputFile);
+                    break;
+                case ImgExportFormat.TIFF:
+                    scratchImage.SaveToWICFile(0, 1, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.TIFF), OutputFile);
+                    break;
+                case ImgExportFormat.DDS:
+                    scratchImage.SaveToDDSFile(DDS_FLAGS.NONE, OutputFile);
+                    break;
+                case ImgExportFormat.PNG:
+                    scratchImage.SaveToWICFile(0, 1, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), OutputFile);
+                    break;
+            }
+        }
     }
 }

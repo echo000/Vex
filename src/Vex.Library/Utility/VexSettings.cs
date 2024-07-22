@@ -13,10 +13,10 @@ namespace Vex.Library
         public string ExportDirectory { get; set; } = Path.Combine(AppContext.BaseDirectory, "exported_files");
         public bool AutoUpdates { get; set; } = true;
 
-        public int ModelExportFormat { get; set; } = (int)MdlExportFormat.CAST;
-        public int AnimationExportFormat { get; set; } = (int)AnimExportFormat.CAST;
-        public int ImageExportFormat { get; set; } = (int)ImgExportFormat.PNG;
-        public int AudioExportFormat { get; set; } = (int)SoundExportFormat.WAV;
+        public byte ModelExportFormat { get; set; } = (byte)MdlExportFormat.CAST;
+        public byte AnimationExportFormat { get; set; } = (byte)AnimExportFormat.CAST;
+        public byte ImageExportFormat { get; set; } = (byte)ImgExportFormat.PNG;
+        public byte AudioExportFormat { get; set; } = (byte)SoundExportFormat.WAV;
 
         public bool LoadModels { get; set; } = true;
         public bool LoadAnimations { get; set; } = true;
@@ -67,6 +67,9 @@ namespace Vex.Library
                                 case TypeCode.Int32:
                                     prop.SetValue(settings, reader.ReadInt32());
                                     break;
+                                case TypeCode.Byte:
+                                    prop.SetValue(settings, reader.ReadByte());
+                                    break;
                                 default:
                                     throw new InvalidOperationException($"Unsupported property type: {prop.PropertyType}");
                             }
@@ -106,6 +109,9 @@ namespace Vex.Library
                             break;
                         case int intValue:
                             writer.Write(intValue);
+                            break;
+                        case byte byteValue:
+                            writer.Write(byteValue);
                             break;
                         default:
                             throw new InvalidOperationException($"Unsupported property type: {prop.PropertyType}");

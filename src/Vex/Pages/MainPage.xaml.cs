@@ -385,6 +385,9 @@ namespace Vex.Pages
                         case AssetType.Model:
                             await LoadModelAsset(asset);
                             break;
+                        case AssetType.Image:
+                            await LoadImageAsset(asset);
+                            break;
                     }
                 }
                 catch (Exception exception)

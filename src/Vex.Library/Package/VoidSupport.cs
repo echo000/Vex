@@ -4,14 +4,17 @@ using PhilLibX.IO;
 using PhilLibX.Media3D;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Media;
 using Vex.Library.Utility;
 
 namespace Vex.Library.Package
 {
     public class VoidSupport
     {
+        //These has to be a better way to do this
         List<VoidContainer> Containers;
 
         public List<Asset> VoidMasterIndex(string FilePath, VexInstance instance)
@@ -27,6 +30,7 @@ namespace Vex.Library.Package
                     Version = Reader.ReadBEInt16()
                 };
 
+                //First byte is type of file (0x04 for index, 0x05 for resource)
                 if (Header.Magic != 0x04534552)
                     throw new Exception();
 
@@ -86,7 +90,7 @@ namespace Vex.Library.Package
                 }
             }
             finally
-            { 
+            {
                 Reader.Close();
                 Stream.Close();
             }
@@ -147,7 +151,7 @@ namespace Vex.Library.Package
                                 break;
                         }
 
-                        if (Entry.EntryType == "baseModel" || Entry.EntryType == "model")
+                        if ((Entry.EntryType == "baseModel" || Entry.EntryType == "model") && instance.Settings.LoadModels)
                         {
                             Entry.Status = AssetStatus.Loaded;
                             Entry.Type = AssetType.Model;
@@ -156,30 +160,43 @@ namespace Vex.Library.Package
                             Entry.InformationString = $"{Entry.EntryType}";
                             Assets.Add(Entry);
                         }
-                        /*                    if (Entry.EntryType == "skeleton")
-                                            {
-                                                Entry.Status = AssetStatus.Loaded;
-                                                Entry.Type = AssetType.RawFile;
-                                                Entry.LoadMethod = ExportAllAssetBytes;
-                                                Entry.InformationString = $"{Entry.EntryType}";
-                                                Assets.Add(Entry);
-                                            }*/
-                        /*                    if(Entry.EntryType == "image")
-                                            {
-                                                Entry.Status = AssetStatus.Loaded;
-                                                Entry.Type = AssetType.Image;
-                                                Entry.LoadMethod = ExportAllBytesDishonored;
-                                                Entry.InformationString = $"{Entry.EntryType}";
-                                                Assets.Add(Entry);
-                                            }*/
-                        /*                    if(Entry.EntryType == "anim")
-                                            {
-                                                Entry.Status = AssetStatus.Loaded;
-                                                Entry.Type = AssetType.Animation;
-                                                Entry.LoadMethod = ExportAllBytesDishonored;
-                                                Entry.InformationString = $"{Entry.EntryType}";
-                                                Assets.Add(Entry);
-                                            }*/
+                        if (Entry.EntryType == "skeleton" && instance.Settings.LoadRawFiles)
+                        {
+                            Entry.Status = AssetStatus.Loaded;
+                            Entry.Type = AssetType.RawFile;
+                            Entry.LoadMethod = ExportAllAssetBytes;
+                            Entry.InformationString = $"{Entry.EntryType}";
+                            Assets.Add(Entry);
+                        }
+                        if (Entry.EntryType == "image" /*&& !Entry.DisplayName.Contains("_mip")*/ && instance.Settings.LoadImages)
+                        {
+                            Entry.Status = AssetStatus.Loaded;
+                            Entry.Type = AssetType.Image;
+                            Entry.LoadMethod = ExportVoidImage;
+                            Entry.BuildPreviewTextureMethod = ImageTest;
+                            Entry.InformationString = $"{Entry.EntryType}";
+                            Assets.Add(Entry);
+                        }
+                        if (Entry.EntryType == "anim" && instance.Settings.LoadAnimations)
+                        {
+                            Entry.Status = AssetStatus.Loaded;
+                            Entry.Type = AssetType.Animation;
+                            Entry.LoadMethod = ExportAllAssetBytes;
+                            Entry.InformationString = $"{Entry.EntryType}";
+                            Assets.Add(Entry);
+                        }
+                        if (Entry.EntryType == "material" && instance.Settings.LoadMaterials)
+                        {
+                            Entry.Status = AssetStatus.Loaded;
+                            Entry.Type = AssetType.Material;
+                            Entry.LoadMethod = ExportAllAssetBytes;
+                            Entry.InformationString = $"{Entry.EntryType}";
+                            Assets.Add(Entry);
+                        }
+                        //This adds all entries to the container so can take up a lot of space,
+                        //I think we only need required types
+                        //model, material, image, anim + their required types - Skeleton, image
+                        //Then can switch what is shown in the UI based on user settings
                         container.Entries.Add(Entry);
                     }
                 }
@@ -210,6 +227,31 @@ namespace Vex.Library.Package
             Directory.CreateDirectory(dir);
             var AssetPath = Path.Combine(instance.Settings.ExportDirectory, instance.GetGameName(), Entry.EntryType, Entry.Destination);
             File.WriteAllBytes(AssetPath, output);
+        }
+
+        public void ExportVoidImage(Asset asset, VexInstance instance)
+        {
+            var Entry = asset as D2Entry;
+            var output = ExtractEntry(Entry, instance);
+            var img = new BImage(output, Path.GetFileName(Entry.Destination), instance);
+            var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Images");
+            Directory.CreateDirectory(dir);
+            ExportManager.ExportBImage(img, Path.Combine(dir, Path.GetFileNameWithoutExtension(asset.DisplayName) + instance.GetImageExportFormat()), ImagePatch.NoPatch, instance);
+        }
+
+        public ImageSource ImageTest(Asset asset, VexInstance instance)
+        {
+            var Entry = asset as D2Entry;
+            var output = ExtractEntry(Entry, instance);
+            var img = new BImage(output, Path.GetFileName(Entry.Destination), instance);
+            ImagePatch patch = ImagePatch.NoPatch;
+            if (Path.GetFileNameWithoutExtension(asset.DisplayName).EndsWith("_n") && instance.Settings.PatchNormals)
+            {
+                patch = ImagePatch.Normal_Expand;
+            }
+            var Result = ImageHelper.ConvertImage(img, patch);
+            Trace.WriteLine(img);
+            return Result;
         }
 
         public Model BuildVoidModel(Asset asset, VexInstance instance)
@@ -249,7 +291,7 @@ namespace Vex.Library.Package
 
         public byte[] ExtractEntry(D2Entry Entry, VexInstance instance)
         {
-            byte[] output = new byte[Entry.AssetSize];
+            byte[] output;
             var container = Containers[Entry.Container];
             var Resource = instance.Game == SupportedGames.Dishonored2 ? container.ResourcePath((ushort)Entry.flag2) : container.Resources[Entry.flag2];
             using var Stream = File.OpenRead(Path.Combine(container.Directory, Resource));
@@ -288,6 +330,13 @@ namespace Vex.Library.Package
                 Stream.Close();
                 Reader.Close();
             }
+        }
+
+        public List<D2Entry> GetImageMipEntries(string match, VexInstance instance)
+        {
+            var ImageEntries = Containers.SelectMany(c => c.Entries)
+                .Where(e => e.Name.Contains(match)).ToList();
+            return ImageEntries;
         }
 
         public void Clear()

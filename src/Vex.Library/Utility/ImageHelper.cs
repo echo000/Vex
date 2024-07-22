@@ -25,6 +25,27 @@ namespace Vex.Library.Utility
             return mem;
         }
 
+        public static BitmapImage ConvertImage(BImage Image, ImagePatch patch)
+        {
+            var ImageBuffer = AddDDSHeaderToBytes(Image.m_Slices[0].m_Content, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height, 1, Image.m_Opts.m_format.DirectXFormat);
+            using var scratchImage = ConvertToFormat(ImageBuffer, patch);
+            using var mem = scratchImage.SaveToWICMemory(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG));
+            return MakeBitmapImage(mem, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height);
+        }
+
+        public static UnmanagedMemoryStream ConvertImageToStream(BImage Image)
+        {
+            using var scratchImage = ConvertBImage(Image);
+            var mem = scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
+            return mem;
+        }
+
+        public static ScratchImage ConvertBImage(BImage Image)
+        {
+            var ImageBuffer = AddDDSHeaderToBytes(Image.m_Slices[0].m_Content, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height, 1, Image.m_Opts.m_format.DirectXFormat);
+            return ConvertToFormat(ImageBuffer);
+        }
+
         public static ScratchImage ConvertToFormat(byte[] array, ImagePatch Patch = ImagePatch.NoPatch)
         {
             //Load the ScratchImage from the byte array (need to pin the array)
@@ -70,32 +91,9 @@ namespace Vex.Library.Utility
         /// <param name="MipLevels">Number of Mips</param>
         /// <param name="ImageDataFormat">The format of the image</param>
         /// <returns></returns>
-        public static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, int ImageDataFormat)
+        public static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, DirectXTexUtility.DXGIFormat ImageDataFormat)
         {
-            var metadata = DirectXTexUtility.GenerateMataData(ImageWidth, ImageHeight, MipLevels, ImageDataFormat
-            switch
-            {
-                24 => DirectXTexUtility.DXGIFormat.R10G10B10A2UNORM,
-                28 => DirectXTexUtility.DXGIFormat.R8G8B8A8UNORM,
-                29 => DirectXTexUtility.DXGIFormat.R8G8B8A8UNORMSRGB,
-                61 => DirectXTexUtility.DXGIFormat.R8UNORM,
-                62 => DirectXTexUtility.DXGIFormat.R8UINT,
-                71 => DirectXTexUtility.DXGIFormat.BC1UNORM,
-                72 => DirectXTexUtility.DXGIFormat.BC1UNORMSRGB,
-                74 => DirectXTexUtility.DXGIFormat.BC2UNORM,
-                75 => DirectXTexUtility.DXGIFormat.BC2UNORMSRGB,
-                77 => DirectXTexUtility.DXGIFormat.BC3UNORM,
-                78 => DirectXTexUtility.DXGIFormat.BC3UNORMSRGB,
-                80 => DirectXTexUtility.DXGIFormat.BC4UNORM,
-                81 => DirectXTexUtility.DXGIFormat.BC4SNORM,
-                83 => DirectXTexUtility.DXGIFormat.BC5UNORM,
-                84 => DirectXTexUtility.DXGIFormat.BC5SNORM,
-                95 => DirectXTexUtility.DXGIFormat.BC6HUF16,
-                96 => DirectXTexUtility.DXGIFormat.BC6HSF16,
-                98 => DirectXTexUtility.DXGIFormat.BC7UNORM,
-                99 => DirectXTexUtility.DXGIFormat.BC7UNORMSRGB,
-                _ => 0
-            }, false);
+            var metadata = DirectXTexUtility.GenerateMataData(ImageWidth, ImageHeight, MipLevels, ImageDataFormat, false);
             DirectXTexUtility.GenerateDDSHeader(metadata, DirectXTexUtility.DDSFlags.NONE, out var header, out var dx10h);
             var headerBuffer = DirectXTexUtility.EncodeDDSHeader(header, dx10h);
 
