@@ -63,6 +63,51 @@ namespace Vex.Library
         public bool Streamed { get; set; }
 
         /// <summary>
+        /// Gets or sets the Asset's container
+        /// </summary>
+        public int Container { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Asset's ID
+        /// </summary>
+        public uint Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Asset's ID
+        /// </summary>
+        public string EntryType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Assets Destination
+        /// </summary>
+        public string Destination { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Compressed Size
+        /// </summary>
+        public int CompressedSize { get; set; }
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        public int Dummy { get; set; }
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        public int Unk { get; set; }
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        public short Flag2 { get; set; }
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        public int Flag3 { get; set; }
+
+        /// <summary>
         /// Gets or Sets the Asset Type
         /// </summary>
         public AssetType Type
@@ -224,7 +269,7 @@ namespace Vex.Library
         /// <returns></returns>
         public virtual bool CompareToSearch(SearchQuery query)
         {
-            var assetName = Name.ToLower();
+            var assetName = DisplayName.ToLower();
             var assetType = Type.ToLower();
 
             foreach (var item in query.Pass)
@@ -320,35 +365,14 @@ namespace Vex.Library
             Streamed = false;
             FileEntry = false;
             AssetPointer = 0;
-        }
-    }
-
-    public class D2Entry : Asset
-    {
-        public int Container;
-        public int Entry;
-        public uint Id;
-        public string EntryType;
-        public string Destination;
-        public ulong ResourcePosition;
-        public int CompressedSize;
-        public int dummy;
-        public int unk;
-        public int flag3;
-        public short flag2;
-
-        public D2Entry()
-        {
             Container = 0;
-            Entry = 0;
             Id = 0;
             EntryType = String.Empty;
             Destination = String.Empty;
-            ResourcePosition = 0;
             CompressedSize = 0;
-            dummy = 0;
-            unk = 0;
-            flag2 = 0;
+            Dummy = 0;
+            Unk = 0;
+            Flag2 = 0;
         }
     }
 

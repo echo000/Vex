@@ -11,7 +11,7 @@ namespace Vex.Library.Utility
 {
     internal class ModelHelper
     {
-        public static Model BuildDishonoredPreviewModel(byte[] ModelBytes, out string SkeletonPath)
+        public static Model BuildDishonoredPreviewModel(byte[] ModelBytes, VexInstance instance, out string SkeletonPath)
         {
             using var ModelStream = new MemoryStream(ModelBytes);
             using var Reader = new BinaryReader(ModelStream);
@@ -78,8 +78,8 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
+                            //Mesh.UVLayers.Add(UVV, v);
                             Mesh.UVLayers.Add(UVU, v);
-                            Mesh.UVLayers.Add(UVV, v);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
                         {
@@ -138,8 +138,8 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
+                            //Mesh.UVLayers.Add(UVV, v);
                             Mesh.UVLayers.Add(UVU, v);
-                            Mesh.UVLayers.Add(UVV, v);
                             var normal = Reader.ReadBytes(4);
                             Mesh.Normals.Add(new Vector3((sbyte)normal[0], (sbyte)normal[1], (sbyte)normal[2]) / 127f);
                             var tangent = Reader.ReadBytes(4); // Currently doing nothing with this
@@ -154,7 +154,7 @@ namespace Vex.Library.Utility
                         var v0 = Reader.ReadUInt16();
                         var v1 = Reader.ReadUInt16();
                         var v2 = Reader.ReadUInt16();
-                        Mesh.Faces.Add((v0, v1, v2));
+                        Mesh.Faces.Add((v2, v1, v0));
                     }
                     Reader.Advance(28);
                     uint BoneIdOffset = 0;
@@ -193,7 +193,7 @@ namespace Vex.Library.Utility
                         Reader.Advance(4);
 
                     var MaterialHeader = Reader.ReadStruct<VoidMaterial>();
-                    var Material = new Material(Path.GetFileNameWithoutExtension(MaterialPath));
+                    var Material = MaterialHelper.GetMaterial(MaterialPath, instance);
                     ResultModel.Materials.Add(Material);
                     ResultModel.Meshes[MaterialHeader.MeshId].Materials.Add(Material);
                 }
@@ -206,7 +206,7 @@ namespace Vex.Library.Utility
             }
         }
 
-        public static Model BuildDeathloopPreviewModel(byte[] ModelBytes, out string SkeletonPath)
+        public static Model BuildDeathloopPreviewModel(byte[] ModelBytes, VexInstance instance, out string SkeletonPath)
         {
             using var SkeletonStream = new MemoryStream(ModelBytes);
             using var Reader = new BinaryReader(SkeletonStream);
@@ -273,7 +273,7 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            Mesh.UVLayers.Add(UVU, v);
+                            //Mesh.UVLayers.Add(UVU, v);
                             Mesh.UVLayers.Add(UVV, v);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
@@ -331,7 +331,7 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            Mesh.UVLayers.Add(UVU, v);
+                            //Mesh.UVLayers.Add(UVU, v);
                             Mesh.UVLayers.Add(UVV, v);
                             var normal = Reader.ReadBytes(4);
                             Mesh.Normals.Add(new Vector3((sbyte)normal[0], (sbyte)normal[1], (sbyte)normal[2]) / 127f);
@@ -347,7 +347,7 @@ namespace Vex.Library.Utility
                         var v0 = Reader.ReadUInt16();
                         var v1 = Reader.ReadUInt16();
                         var v2 = Reader.ReadUInt16();
-                        Mesh.Faces.Add((v0, v1, v2));
+                        Mesh.Faces.Add((v2, v1, v0));
                     }
                     Reader.Advance(28);
                     uint BoneIdOffset = 0;
@@ -377,7 +377,7 @@ namespace Vex.Library.Utility
                 {
                     var MaterialPath = Reader.ReadFixedPrefixString();
                     var MaterialHeader = Reader.ReadStruct<VoidMaterial>();
-                    var Material = new Material(Path.GetFileNameWithoutExtension(MaterialPath));
+                    var Material = MaterialHelper.GetMaterial(MaterialPath, instance);
                     ResultModel.Materials.Add(Material);
                     ResultModel.Meshes[MaterialHeader.MeshId].Materials.Add(Material);
                 }

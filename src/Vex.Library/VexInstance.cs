@@ -107,16 +107,6 @@ namespace Vex.Library
             };
         }
 
-        public string GetAudioExportFormat()
-        {
-            return Settings.AudioExportFormat switch
-            {
-                (int)SoundExportFormat.WAV => ".wav",
-                (int)SoundExportFormat.FLAC => ".flac",
-                _ => ".wav",
-            };
-        }
-
         private bool disposedValue;
         protected virtual void Dispose(bool disposing)
         {

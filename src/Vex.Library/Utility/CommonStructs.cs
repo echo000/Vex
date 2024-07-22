@@ -16,7 +16,7 @@ namespace Vex.Library
         public string Directory;
         public string Path;
         public List<string> Resources;
-        public List<D2Entry> Entries;
+        public List<Asset> Entries;
         public VoidContainer()
         {
             Resources = [];

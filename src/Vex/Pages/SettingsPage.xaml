@@ -89,7 +89,6 @@
                             <CheckBox IsChecked="{Binding Path=ExportModelImages}">Export Images With Models</CheckBox>
                             <CheckBox IsChecked="{Binding Path=MaterialModelFolders}">Export Images into Material Folders</CheckBox>
                             <CheckBox IsChecked="{Binding Path=PatchNormals}">Rebuild Normal Maps</CheckBox>
-                            <CheckBox IsChecked="{Binding Path=PatchColor}">Rebuild Colour Maps</CheckBox>
                             <CheckBox IsChecked="{Binding Path=AudioLanguageFolders}">Preserve File Paths</CheckBox>
                         </StackPanel>
                     </Grid>

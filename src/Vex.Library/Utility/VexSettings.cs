@@ -15,8 +15,7 @@ namespace Vex.Library
 
         public byte ModelExportFormat { get; set; } = (byte)MdlExportFormat.CAST;
         public byte AnimationExportFormat { get; set; } = (byte)AnimExportFormat.CAST;
-        public byte ImageExportFormat { get; set; } = (byte)ImgExportFormat.PNG;
-        public byte AudioExportFormat { get; set; } = (byte)SoundExportFormat.WAV;
+        public byte ImageExportFormat { get; set; } = (byte)ImgExportFormat.DDS;
 
         public bool LoadModels { get; set; } = true;
         public bool LoadAnimations { get; set; } = true;
@@ -31,13 +30,11 @@ namespace Vex.Library
         public bool ExportModelImages { get; set; } = true;
         public bool ExportHitbox { get; set; } = false;
         public bool GlobalImages { get; set; } = false;
-        public bool MaterialModelFolders { get; set; } = true;
+        public bool MaterialModelFolders { get; set; } = false;
 
         public bool PatchNormals { get; set; } = true;
-        public bool PatchColor { get; set; } = true;
         public bool OverwriteExistingFiles { get; set; } = false;
         public bool KeepSoundPath { get; set; } = false;
-        public bool SkipBlankAudio { get; set; } = false;
         public bool AudioLanguageFolders { get; set; } = false;
 
         public static VexSettings Load(string fileName)

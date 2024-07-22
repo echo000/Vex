@@ -1,4 +1,5 @@
 ﻿using HelixToolkit.SharpDX.Core;
+using HelixToolkit.SharpDX.Core.Core;
 using HelixToolkit.Wpf.SharpDX;
 using PhilLibX.Media3D;
 using SharpDX;
@@ -38,9 +39,9 @@ namespace Vex
             Viewport.ModelUpDirection = new System.Windows.Media.Media3D.Vector3D(0, 0, 1);
         }
 
-        public void LoadModel(Model model, Dictionary<string, XImageDDS> images = null)
+        public void LoadModel(Model model, VexInstance instance)
         {
-            var Mesh = CreateModel(model, images);
+            var Mesh = CreateModel(model, instance);
             ViewModel.ModelGroup = Mesh;
         }
 
@@ -78,59 +79,54 @@ namespace Vex
             Image.Source = null;
         }
 
-        public static GroupModel3D CreateModel(Model model, Dictionary<string, XImageDDS> images = null)
+        public static GroupModel3D CreateModel(Model model, VexInstance instance)
         {
             var ModelGroup = new GroupModel3D();
             foreach (var Mesh in model.Meshes)
             {
-                var Positions = new List<Vector3>();
-                var Faces = new List<int>();
-                var Normals = new List<Vector3>();
-                var UVs = new List<Vector2>();
                 var geometry = new MeshGeometry3D
                 {
                     Positions = new Vector3Collection(Mesh.Positions.Select(p => new Vector3(p.X, p.Y, p.Z))),
-                    TriangleIndices = new IntCollection(Mesh.Faces.SelectMany(f => new[] { f.Item3, f.Item2, f.Item1 })),
+                    TriangleIndices = new IntCollection(Mesh.Faces.SelectMany(f => new[] { f.Item1, f.Item2, f.Item3 })),
                     Normals = new Vector3Collection(Mesh.Normals.Select(n => new Vector3(n.X, n.Y, n.Z))),
-                    TextureCoordinates = new Vector2Collection(Mesh.UVLayers.Select(uv => new Vector2(uv.X, uv.Y)))
+                    TextureCoordinates = new Vector2Collection(Mesh.UVLayers.Select(uv => new Vector2(uv.X, uv.Y))),
                 };
-                var material = CreateMaterial(Mesh.Materials, images);
+                var material = CreateMaterial(Mesh.Materials, instance);
                 var MG = new MeshGeometryModel3D
                 {
                     Geometry = geometry,
-                    Material = material
+                    Material = material,
                 };
                 ModelGroup.Children.Add(MG);
-            }
-            if (images != null)
-            {
-                foreach (var image in images.Values)
-                {
-                    image.DataBuffer = null;
-                }
-                // Clear the dictionary itself
-                images.Clear();
-                images = null;
             }
             return ModelGroup;
         }
 
-        private static PhongMaterial CreateMaterial(List<PhilLibX.Media3D.Material> materials, Dictionary<string, XImageDDS> images)
+        private static PhongMaterial CreateMaterial(List<PhilLibX.Media3D.Material> materials, VexInstance instance)
         {
             var material = new PhongMaterial
             {
                 DiffuseColor = SharpDX.Color.White,
-                AmbientColor = SharpDX.Color.Black,
                 ReflectiveColor = SharpDX.Color.Black,
                 EmissiveColor = SharpDX.Color.Black
             };
 
             foreach (var mat in materials)
             {
-                if (mat.Textures.TryGetValue("DiffuseMap", out var imgHash) && images?.Count > 0)
+                if (mat.Textures.TryGetValue("DiffuseMap", out var imgHash))
                 {
-                    var image = images[imgHash.Name];
-                    var ms = ImageHelper.ConvertImageToStream(image.DataBuffer);
+                    var image = instance.VoidSupport.GetEntryFromName(imgHash.FilePath);
+                    if(image == null)
+                    {
+                        material.DiffuseColor = new Color4(
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        1);
+                        continue;
+                    }
+                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
+                    var ms = ImageHelper.ConvertImageToStream(bImage);
                     material.DiffuseMap = new TextureModel(ms, true);
                 }
                 else
@@ -141,19 +137,20 @@ namespace Vex
                         (byte)RandomInt.Next(128, 255) / 255f,
                         1);
                 }
-
-                if (mat.Textures.TryGetValue("SpecularMap", out var specHash) && images?.Count > 0)
+/*                if (mat.Textures.TryGetValue("SpecularMap", out var specHash))
                 {
-                    var image = images[specHash.Name];
-                    var ms = ImageHelper.ConvertImageToStream(image.DataBuffer);
+                    var image = instance.VoidSupport.GetEntryFromName(imgHash.Name);
+                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
+                    var ms = ImageHelper.ConvertImageToStream(bImage);
+                    material.DiffuseMap = new TextureModel(ms, true);
                     material.SpecularColorMap = new TextureModel(ms, true);
                     material.SpecularShininess = 10f;
                 }
                 else
-                {
+                {*/
                     material.SpecularColor = SharpDX.Color.Black;
                     material.SpecularShininess = 20f;
-                }
+                //}
             }
 
             return material;

@@ -39,6 +39,7 @@
                 <MouseBinding Command="hx:ViewportCommands.Rotate" Gesture="RightClick" />
                 <MouseBinding Command="hx:ViewportCommands.Pan" Gesture="MiddleClick" />
             </hx:Viewport3DX.InputBindings>
+            <hx:AmbientLight3D Color="White" />
             <hx:DirectionalLight3D Direction="{Binding Camera.LookDirection}" Color="White" />
             <hx:Element3DPresenter x:Name="Model" Content="{Binding ModelGroup}" IsHitTestVisible="False" />
             <hx:LineGeometryModel3D

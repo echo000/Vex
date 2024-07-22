@@ -20,23 +20,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Games\WorldAtWar\**" />
-    <EmbeddedResource Remove="Games\WorldAtWar\**" />
-    <None Remove="Games\WorldAtWar\**" />
-    <Page Remove="Games\WorldAtWar\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Games\Deathloop\Deathloop.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\PhilLibX\PhilLibX.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DirectXTexNet" Version="1.0.3" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Games\Deathloop\" />
-    <Folder Include="Games\Dishonored\" />
   </ItemGroup>
 </Project>

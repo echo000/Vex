@@ -238,7 +238,7 @@ namespace Vex.Pages
         {
             var openFileDialog = new OpenFileDialog()
             {
-                Filter = "All files (*.*)|*.*;|Index File (*.index)|*.index;",
+                Filter = "Master Index File (master.index)|master.index;",
                 Multiselect = false,
                 Title = "Select a game file to load"
             };
@@ -386,6 +386,7 @@ namespace Vex.Pages
                             await LoadModelAsset(asset);
                             break;
                         case AssetType.Image:
+                        case AssetType.Material:
                             await LoadImageAsset(asset);
                             break;
                     }
@@ -411,7 +412,7 @@ namespace Vex.Pages
 
             Dispatcher.Invoke(() =>
             {
-                ModelViewer.LoadModel(model, null);
+                ModelViewer.LoadModel(model, Instance);
                 ModelViewer.ViewModel.StatusText = $"Status     : Loaded {modelAsset.DisplayName}";
                 ModelViewer.Viewport.SubTitle = $"Bones      : {(model.Skeleton != null ? model.Skeleton.Bones.Count : 0)}\n" +
                                                 $"Vertices   : {model.GetVertexCount()}\n" +

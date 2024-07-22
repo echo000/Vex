@@ -33,9 +33,10 @@ namespace Vex.Library.Utility
             return MakeBitmapImage(mem, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight);
         }
 
-        public static UnmanagedMemoryStream ConvertImageToStream(BImage Image, ImagePatch patch)
+        public static UnmanagedMemoryStream ConvertImageToStream(BImage Image, ImagePatch patch = ImagePatch.NoPatch)
         {
             using var scratchImage = ConvertBImage(Image, patch);
+            PatchAlphaChannel(scratchImage);
             var mem = scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
             return mem;
         }
@@ -293,7 +294,6 @@ namespace Vex.Library.Utility
             var result = new List<byte>();
             uint ArraySize = 6 * image.m_Opts.m_arraySize;
             uint MipsCount = image.m_Opts.m_curNumLevels;
-            uint PixelSize = image.m_Opts.m_format.BitsCount >> 3;
             for (uint SliceIndex = 0; SliceIndex < ArraySize; SliceIndex++)
             {
                 for (uint MipLevelIndex = 0; MipLevelIndex < MipsCount; MipLevelIndex++)

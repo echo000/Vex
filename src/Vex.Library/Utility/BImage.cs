@@ -136,7 +136,7 @@ namespace Vex.Library.Utility
                         Layout.LAYOUT_BC7 => 8,
                         /*case ARK_GFX_FORMAT_LAYOUT_24_8: return 32;
                         case ARK_GFX_FORMAT_LAYOUT_16_8: return 32;*/
-                        _ => throw new Exception("Invalid arkGFXFormat_t"),
+                        _ => throw new Exception("Invalid Format"),
                     };
                 }
             }
@@ -541,7 +541,7 @@ namespace Vex.Library.Utility
             if (mipsCountInFile < mipsCountTotal)
             {
                 // This means the largest mips are stored elsewhere, for streaming purpose...
-                var ImageMips = instance.VoidSupport.GetImageMipEntries(AssetName + "_mip", instance);
+                var ImageMips = instance.VoidSupport.GetEntriesFromName(AssetName + "_mip");
                 ImageMips.Sort((entry1, entry2) => string.CompareOrdinal(entry1.Name, entry2.Name));
                 for (int i = 0; i < ImageMips.Count; i++)
                 {
@@ -597,9 +597,11 @@ namespace Vex.Library.Utility
                 var unk1 = Reader.ReadUInt32();
                 var unk2 = Reader.ReadUInt32();
             }
-        
+
             for (uint i = 0; i < totalSlicesInFile; i++)
+            {
                 Slices.Add(new ImageSlice(this, Reader, mipOffset));
+            }
 
             m_Slices = [.. Slices];
         }

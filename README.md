@@ -32,7 +32,7 @@ This repo is in no shape or form associated with Activision and the developers. 
 
 * [echo000](https://github.com/echo000) - Developer and Maintainer
 * [Scobalula](https://github.com/Scobalula) - Modified version of [PhilLibX](https://github.com/Scobalula/PhilLibX)
-* [DTZxPorter](https://github.com/dtzxporter/) - Help with Game Research
+* [DTZxPorter](https://github.com/dtzxporter/) - Help with Game Research - This entire project wouldn't be possible without his help
 * id-daemon - Game Research
 
 **If you use Vex in any of your projects, it would be highly appreciated if you credit the people/parties listed in the Credits list.**
