@@ -11,35 +11,51 @@ namespace Vex.Library.Utility
     {
         public static void ExportModel(Model Result, string Name, VexInstance instance)
         {
+            if (Result == null)
+                return;
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Models", Name);
             var ImagesPath = instance.Settings.GlobalImages ? Path.Combine(Path.GetDirectoryName(dir), "_Images") : Path.Combine(dir, "_Images");
             var ImageRelativePath = instance.Settings.GlobalImages ? "..\\\\_Images\\\\" : "_Images\\\\";
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(ImagesPath);
-
-            if (Result != null)
+            foreach(var Material in Result.Materials)
             {
-                string format = "";
-                switch ((MdlExportFormat)instance.Settings.ModelExportFormat)
+                ExportMaterialImages(Material, ImagesPath, instance);
+                foreach(var texture in Material.Textures)
                 {
-                    case MdlExportFormat.XMODEL:
-                        format = ".xmodel_export";
-                        break;
-                    case MdlExportFormat.SEMODEL:
-                        format = ".semodel";
-                        break;
-                    case MdlExportFormat.CAST:
-                        format = ".cast";
-                        break;
+                    texture.Value.Name = $"{ImageRelativePath}{texture.Value.Name}{instance.GetImageExportFormat()}";
                 }
-                instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
             }
+            string format = "";
+            switch ((MdlExportFormat)instance.Settings.ModelExportFormat)
+            {
+                case MdlExportFormat.XMODEL:
+                    format = ".xmodel_export";
+                    break;
+                case MdlExportFormat.SEMODEL:
+                    format = ".semodel";
+                    break;
+                case MdlExportFormat.CAST:
+                    format = ".cast";
+                    break;
+            }
+            instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
         }
 
 
-        public static void ExportMaterialImages(XMaterial_t material, string ImagesPath, VexInstance instance)
+        public static void ExportMaterialImages(Material material, string ImagesPath, VexInstance instance)
         {
-
+            foreach(var texture in material.Textures)
+            {
+                var path = Path.Combine(ImagesPath, $"{texture.Value.Name}{instance.GetImageExportFormat()}");
+                var ImageAsset = instance.VoidSupport.GetEntryFromName(texture.Value.FilePath);
+                if (ImageAsset != null)
+                {
+                    var output = instance.VoidSupport.ExtractEntry(ImageAsset, instance);
+                    var img = new BImage(output, Path.GetFileName(ImageAsset.Destination), instance);
+                    ExportBImage(img, path, ImagePatch.NoPatch, instance);
+                }
+            }
         }
 
         public static void ExportAnimation(Animation animation, string OutputFolder, string name, VexInstance instance)
