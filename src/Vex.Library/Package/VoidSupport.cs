@@ -17,70 +17,78 @@ namespace Vex.Library.Package
         public List<Asset> VoidMasterIndex(string FilePath, VexInstance instance)
         {
             Containers = [];
-            using var stream = File.OpenRead(FilePath);
-            using var Reader = new BinaryReader(stream);
-            var Header = new VoidResourceHeader
+            using var Stream = File.OpenRead(FilePath);
+            using var Reader = new BinaryReader(Stream);
+            try
             {
-                Magic = Reader.ReadBEInt32(),
-                Version = Reader.ReadBEInt16()
-            };
+                var Header = new VoidResourceHeader
+                {
+                    Magic = Reader.ReadBEInt32(),
+                    Version = Reader.ReadBEInt16()
+                };
 
-            if (Header.Magic != 0x04534552)
-                throw new Exception();
+                if (Header.Magic != 0x04534552)
+                    throw new Exception();
 
-            //Dishonored 2
-            if (Header.Version == 0x2)
-            {
-                instance.Game = SupportedGames.Dishonored2;
-                var IndexCount = Reader.ReadBEInt16();
-                for (int i = 0; i < IndexCount; i++)
+                //Dishonored 2
+                if (Header.Version == 0x2)
                 {
-                    var IndexName = Reader.ReadFixedPrefixString();
-                    var ResourceName = Reader.ReadFixedPrefixString();
-                    var Container = new VoidContainer { Directory = Path.GetDirectoryName(FilePath), Path = IndexName };
-                    Container.Resources.Add(ResourceName);
-                    Containers.Add(Container);
-                }
-                var ResourceCount = Reader.ReadBEInt32();
-                for (int i = 0; i < ResourceCount; i++)
-                {
-                    var Name = Reader.ReadFixedPrefixString();
-                    var index = Reader.ReadBEInt16();
-                    Containers[index].Resources.Add(Name);
-                }
-                var RscCount = Reader.ReadBEInt32();
-                for (int i = 0; i < RscCount; i++)
-                {
-                    var sharedIndexCount = Reader.ReadBEInt32();
-                    var sharedIndices = new List<short>();
-                    for (int j = 0; j < sharedIndexCount; j++)
+                    instance.Game = SupportedGames.Dishonored2;
+                    var IndexCount = Reader.ReadBEInt16();
+                    for (int i = 0; i < IndexCount; i++)
                     {
-                        sharedIndices.Add(Reader.ReadBEInt16());
+                        var IndexName = Reader.ReadFixedPrefixString();
+                        var ResourceName = Reader.ReadFixedPrefixString();
+                        var Container = new VoidContainer { Directory = Path.GetDirectoryName(FilePath), Path = IndexName };
+                        Container.Resources.Add(ResourceName);
+                        Containers.Add(Container);
                     }
-                    var Name = Reader.ReadFixedPrefixString();
-                    foreach (var index in sharedIndices)
+                    var ResourceCount = Reader.ReadBEInt32();
+                    for (int i = 0; i < ResourceCount; i++)
                     {
+                        var Name = Reader.ReadFixedPrefixString();
+                        var index = Reader.ReadBEInt16();
                         Containers[index].Resources.Add(Name);
                     }
+                    var RscCount = Reader.ReadBEInt32();
+                    for (int i = 0; i < RscCount; i++)
+                    {
+                        var sharedIndexCount = Reader.ReadBEInt32();
+                        var sharedIndices = new List<short>();
+                        for (int j = 0; j < sharedIndexCount; j++)
+                        {
+                            sharedIndices.Add(Reader.ReadBEInt16());
+                        }
+                        var Name = Reader.ReadFixedPrefixString();
+                        foreach (var index in sharedIndices)
+                        {
+                            Containers[index].Resources.Add(Name);
+                        }
+                    }
+                    return ParseVoidResources(instance);
                 }
-                return ParseVoidResources(instance);
-            }
-            //Deathloop
-            else if (Header.Version == 0x3)
-            {
-                instance.Game = SupportedGames.Deathloop;
-                var BaseDirectory = Path.GetDirectoryName(FilePath);
-                GetOodleDLL(BaseDirectory);
-                var IndexName = Reader.ReadFixedPrefixString();
-                var Container = new VoidContainer { Directory = BaseDirectory, Path = IndexName };
-                Containers.Add(Container);
-                var ResourceCount = Reader.ReadBEInt16();
-                for (int i = 0; i < ResourceCount; i++)
+                //Deathloop
+                else if (Header.Version == 0x3)
                 {
-                    var Name = Reader.ReadFixedPrefixString();
-                    Containers[0].Resources.Add(Name);
+                    instance.Game = SupportedGames.Deathloop;
+                    var BaseDirectory = Path.GetDirectoryName(FilePath);
+                    GetOodleDLL(BaseDirectory);
+                    var IndexName = Reader.ReadFixedPrefixString();
+                    var Container = new VoidContainer { Directory = BaseDirectory, Path = IndexName };
+                    Containers.Add(Container);
+                    var ResourceCount = Reader.ReadBEInt16();
+                    for (int i = 0; i < ResourceCount; i++)
+                    {
+                        var Name = Reader.ReadFixedPrefixString();
+                        Containers[0].Resources.Add(Name);
+                    }
+                    return ParseVoidResources(instance);
                 }
-                return ParseVoidResources(instance);
+            }
+            finally
+            { 
+                Reader.Close();
+                Stream.Close();
             }
 
             return null;
@@ -93,84 +101,92 @@ namespace Vex.Library.Package
             for (var ci = 0; ci < Containers.Count; ci++)
             {
                 var container = Containers[ci];
-                using var stream = File.OpenRead(Path.Combine(container.Directory, container.Path));
-                using var Reader = new BinaryReader(stream);
-                var Magic = Reader.ReadBEInt32();
-                if (Magic != 0x05534552)
-                    throw new Exception();
-                Reader.Advance(28);
-
-                var EntryCount = Reader.ReadBEInt32();
-                for (int i = 0; i < EntryCount; i++)
+                using var Stream = File.OpenRead(Path.Combine(container.Directory, container.Path));
+                using var Reader = new BinaryReader(Stream);
+                try
                 {
-                    var Entry = new D2Entry();
-                    switch (instance.Game)
-                    {
-                        case SupportedGames.Dishonored2:
-                            Entry.AssetPointer = Reader.BaseStream.Position;
-                            Entry.Container = ci;
-                            Entry.Id = Reader.ReadBEUInt32();
-                            Entry.EntryType = Reader.ReadFixedPrefixString();
-                            Entry.Name = Reader.ReadFixedPrefixString();
-                            Entry.Destination = Reader.ReadFixedPrefixString();
-                            Entry.ResourcePosition = Reader.ReadBEUInt64();
-                            Entry.AssetSize = Reader.ReadBEInt32();
-                            Entry.CompressedSize = Reader.ReadBEInt32();
-                            Entry.dummy = Reader.ReadBEInt32();
-                            Entry.unk = Reader.ReadBEInt32();
-                            Entry.flag2 = Reader.ReadBEInt16();
-                            break;
-                        case SupportedGames.Deathloop:
-                            Entry.AssetPointer = Reader.BaseStream.Position;
-                            Entry.Container = ci;
-                            Entry.Id = Reader.ReadUInt32();
-                            Entry.EntryType = Reader.ReadFixedPrefixString();
-                            Entry.Name = Reader.ReadFixedPrefixString();
-                            Entry.Destination = Reader.ReadFixedPrefixString();
-                            Entry.ResourcePosition = Reader.ReadUInt64();
-                            Entry.AssetSize = Reader.ReadInt32();
-                            Entry.CompressedSize = Reader.ReadInt32();
-                            Entry.dummy = Reader.ReadInt32();
-                            Entry.unk = Reader.ReadInt32();
-                            Entry.flag3 = Reader.ReadInt32();
-                            Entry.flag2 = Reader.ReadInt16();
-                            break;
-                    }
+                    var Magic = Reader.ReadBEInt32();
+                    if (Magic != 0x05534552)
+                        throw new Exception();
+                    Reader.Advance(28);
 
-                    if (Entry.EntryType == "baseModel" || Entry.EntryType == "model")
+                    var EntryCount = Reader.ReadBEInt32();
+                    for (int i = 0; i < EntryCount; i++)
                     {
-                        Entry.Status = AssetStatus.Loaded;
-                        Entry.Type = AssetType.Model;
-                        Entry.LoadMethod = ExportVoidModel;
-                        Entry.BuildPreviewMethod = BuildVoidModel;
-                        Entry.InformationString = $"{Entry.EntryType}";
-                        Assets.Add(Entry);
+                        var Entry = new D2Entry();
+                        switch (instance.Game)
+                        {
+                            case SupportedGames.Dishonored2:
+                                Entry.AssetPointer = Reader.BaseStream.Position;
+                                Entry.Container = ci;
+                                Entry.Id = Reader.ReadBEUInt32();
+                                Entry.EntryType = Reader.ReadFixedPrefixString();
+                                Entry.Name = Reader.ReadFixedPrefixString();
+                                Entry.Destination = Reader.ReadFixedPrefixString();
+                                Entry.ResourcePosition = Reader.ReadBEUInt64();
+                                Entry.AssetSize = Reader.ReadBEInt32();
+                                Entry.CompressedSize = Reader.ReadBEInt32();
+                                Entry.dummy = Reader.ReadBEInt32();
+                                Entry.unk = Reader.ReadBEInt32();
+                                Entry.flag2 = Reader.ReadBEInt16();
+                                break;
+                            case SupportedGames.Deathloop:
+                                Entry.AssetPointer = Reader.BaseStream.Position;
+                                Entry.Container = ci;
+                                Entry.Id = Reader.ReadUInt32();
+                                Entry.EntryType = Reader.ReadFixedPrefixString();
+                                Entry.Name = Reader.ReadFixedPrefixString();
+                                Entry.Destination = Reader.ReadFixedPrefixString();
+                                Entry.ResourcePosition = Reader.ReadUInt64();
+                                Entry.AssetSize = Reader.ReadInt32();
+                                Entry.CompressedSize = Reader.ReadInt32();
+                                Entry.dummy = Reader.ReadInt32();
+                                Entry.unk = Reader.ReadInt32();
+                                Entry.flag3 = Reader.ReadInt32();
+                                Entry.flag2 = Reader.ReadInt16();
+                                break;
+                        }
+
+                        if (Entry.EntryType == "baseModel" || Entry.EntryType == "model")
+                        {
+                            Entry.Status = AssetStatus.Loaded;
+                            Entry.Type = AssetType.Model;
+                            Entry.LoadMethod = ExportVoidModel;
+                            Entry.BuildPreviewMethod = BuildVoidModel;
+                            Entry.InformationString = $"{Entry.EntryType}";
+                            Assets.Add(Entry);
+                        }
+                        /*                    if (Entry.EntryType == "skeleton")
+                                            {
+                                                Entry.Status = AssetStatus.Loaded;
+                                                Entry.Type = AssetType.RawFile;
+                                                Entry.LoadMethod = ExportAllAssetBytes;
+                                                Entry.InformationString = $"{Entry.EntryType}";
+                                                Assets.Add(Entry);
+                                            }*/
+                        /*                    if(Entry.EntryType == "image")
+                                            {
+                                                Entry.Status = AssetStatus.Loaded;
+                                                Entry.Type = AssetType.Image;
+                                                Entry.LoadMethod = ExportAllBytesDishonored;
+                                                Entry.InformationString = $"{Entry.EntryType}";
+                                                Assets.Add(Entry);
+                                            }*/
+                        /*                    if(Entry.EntryType == "anim")
+                                            {
+                                                Entry.Status = AssetStatus.Loaded;
+                                                Entry.Type = AssetType.Animation;
+                                                Entry.LoadMethod = ExportAllBytesDishonored;
+                                                Entry.InformationString = $"{Entry.EntryType}";
+                                                Assets.Add(Entry);
+                                            }*/
+                        container.Entries.Add(Entry);
                     }
-/*                    if (Entry.EntryType == "skeleton")
-                    {
-                        Entry.Status = AssetStatus.Loaded;
-                        Entry.Type = AssetType.RawFile;
-                        Entry.LoadMethod = ExportAllAssetBytes;
-                        Entry.InformationString = $"{Entry.EntryType}";
-                        Assets.Add(Entry);
-                    }*/
-                    /*                    if(Entry.EntryType == "image")
-                                        {
-                                            Entry.Status = AssetStatus.Loaded;
-                                            Entry.Type = AssetType.Image;
-                                            Entry.LoadMethod = ExportAllBytesDishonored;
-                                            Entry.InformationString = $"{Entry.EntryType}";
-                                            Assets.Add(Entry);
-                                        }*/
-                    /*                    if(Entry.EntryType == "anim")
-                                        {
-                                            Entry.Status = AssetStatus.Loaded;
-                                            Entry.Type = AssetType.Animation;
-                                            Entry.LoadMethod = ExportAllBytesDishonored;
-                                            Entry.InformationString = $"{Entry.EntryType}";
-                                            Assets.Add(Entry);
-                                        }*/
-                    container.Entries.Add(Entry);
+                }
+                finally
+                {
+                    Reader.Close();
+                    Stream.Close();
                 }
 
             }
@@ -236,34 +252,42 @@ namespace Vex.Library.Package
             byte[] output = new byte[Entry.AssetSize];
             var container = Containers[Entry.Container];
             var Resource = instance.Game == SupportedGames.Dishonored2 ? container.ResourcePath((ushort)Entry.flag2) : container.Resources[Entry.flag2];
-            using var stream = File.OpenRead(Path.Combine(container.Directory, Resource));
-            using var Reader = new BinaryReader(stream);
-            Reader.Seek((long)Entry.ResourcePosition);
-            byte[] ReadData;
-            var oodle = Reader.ReadFixedString(4);
-            if (oodle == "OOD")
+            using var Stream = File.OpenRead(Path.Combine(container.Directory, Resource));
+            using var Reader = new BinaryReader(Stream);
+            try
             {
-                var dummy = Reader.ReadInt32();
-                var xsize = Reader.ReadInt32();
-                var bytesToRead = Entry.CompressedSize - 12;
-                ReadData = Reader.ReadBytes(bytesToRead);
-                output = Oodle.Decompress(ReadData, (int)Entry.AssetSize);
-            }
-            else
-            {
-                //Go back 4 bytes if not OOD
-                Reader.BaseStream.Position -= 4;
-                ReadData = Reader.ReadBytes(Entry.CompressedSize);
-                if (Entry.AssetSize != Entry.CompressedSize)
+                Reader.Seek((long)Entry.ResourcePosition);
+                byte[] ReadData;
+                var oodle = Reader.ReadFixedString(4);
+                if (oodle == "OOD")
                 {
-                    output = ZLIB.Decompress(ReadData, (int)Entry.AssetSize);
+                    var dummy = Reader.ReadInt32();
+                    var xsize = Reader.ReadInt32();
+                    var bytesToRead = Entry.CompressedSize - 12;
+                    ReadData = Reader.ReadBytes(bytesToRead);
+                    output = Oodle.Decompress(ReadData, (int)Entry.AssetSize);
                 }
                 else
                 {
-                    output = ReadData;
+                    //Go back 4 bytes if not OOD
+                    Reader.BaseStream.Position -= 4;
+                    ReadData = Reader.ReadBytes(Entry.CompressedSize);
+                    if (Entry.AssetSize != Entry.CompressedSize)
+                    {
+                        output = ZLIB.Decompress(ReadData, (int)Entry.AssetSize);
+                    }
+                    else
+                    {
+                        output = ReadData;
+                    }
                 }
+                return output;
             }
-            return output;
+            finally
+            {
+                Stream.Close();
+                Reader.Close();
+            }
         }
 
         public void Clear()
