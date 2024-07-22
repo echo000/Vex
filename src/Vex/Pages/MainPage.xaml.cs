@@ -410,10 +410,10 @@ namespace Vex.Pages
             {
                 ModelViewer.LoadModel(model, null);
                 ModelViewer.ViewModel.StatusText = $"Status     : Loaded {modelAsset.DisplayName}";
-                ModelViewer.Viewport.SubTitle = //$"Bones      : {model.Skeleton.Bones.Count}\n" +
+                ModelViewer.Viewport.SubTitle = $"Bones      : {(model.Skeleton != null ? model.Skeleton.Bones.Count : 0)}\n" +
                                                 $"Vertices   : {model.GetVertexCount()}\n" +
-                                                $"Faces      : {model.GetFaceCount()}\n";
-                                                //$"Materials  : {model.Materials.Count}\n";
+                                                $"Faces      : {model.GetFaceCount()}\n" +
+                                                $"Materials  : {model.Materials.Count}\n";
                 ModelViewer.Viewport.Visibility = Visibility.Visible;
                 ModelViewer.Image.Visibility = Visibility.Hidden;
                 ModelViewer.Status.Visibility = Visibility.Hidden;

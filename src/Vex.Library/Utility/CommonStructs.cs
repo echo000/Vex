@@ -80,7 +80,7 @@ namespace Vex.Library
         public uint unk3;
         public uint ExtJointCount;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public short[] udata0;
     }
 
@@ -88,7 +88,7 @@ namespace Vex.Library
     struct VoidParents
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public short[] test;
+        public ushort[] test;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -11,7 +11,7 @@ namespace Vex.Library.Utility
     {
         public static void ExportModel(Model Result, string Name, VexInstance instance)
         {
-            var dir = Path.Combine(instance.ExportFolder, "Models", Name);
+            var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Models", Name);
             var ImagesPath = instance.Settings.GlobalImages ? Path.Combine(Path.GetDirectoryName(dir), "_Images") : Path.Combine(dir, "_Images");
             var ImageRelativePath = instance.Settings.GlobalImages ? "..\\\\_Images\\\\" : "_Images\\\\";
             Directory.CreateDirectory(dir);

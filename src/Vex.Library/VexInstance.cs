@@ -18,11 +18,6 @@ namespace Vex.Library
         public VoidSupport VoidSupport;
 
         /// <summary>
-        /// Gets or Sets the current game flags
-        /// </summary>
-        public GameFlags LoadedGameFlags { get; set; }
-
-        /// <summary>
         /// Gets or Sets the current Settings
         /// </summary>
         public VexSettings Settings = new();
@@ -31,6 +26,11 @@ namespace Vex.Library
         /// Gets or Sets the loaded Assets
         /// </summary>
         public List<Asset> Assets { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the loaded Game
+        /// </summary>
+        public SupportedGames Game { get; set; }
 
         /// <summary>
         /// Gets the Export Path
@@ -46,8 +46,6 @@ namespace Vex.Library
 
         public void Clear()
         {
-            LoadedGameFlags = GameFlags.None;
-
             VoidSupport?.Clear();
             Assets?.Clear();
 
@@ -74,10 +72,9 @@ namespace Vex.Library
             {
                 case ".index":
                     VoidSupport = new VoidSupport();
-                    Assets.AddRange(VoidSupport.VoidMasterIndex(FileName));
+                    Assets.AddRange(VoidSupport.VoidMasterIndex(FileName, this));
                     //Maybe add the cache here instead of having cached files in the support itself
                     //Alternatively, have a Void Support member inside this class
-                    LoadedGameFlags = GameFlags.Files;
                     break;
                 default:
                     throw new InvalidFileException();
@@ -137,6 +134,17 @@ namespace Vex.Library
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public string GetGameName()
+        {
+            return Game switch
+            {
+                SupportedGames.None => "None",
+                SupportedGames.Dishonored2 => "Dishonored 2",
+                SupportedGames.Deathloop => "Deathloop",
+                _ => throw new ArgumentOutOfRangeException(nameof(Game), Game, "Unsupported game type"),
+            };
         }
     }
 }
