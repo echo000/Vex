@@ -173,7 +173,7 @@ namespace Vex.Library.Package
                             Entry.Status = AssetStatus.Loaded;
                             Entry.Type = AssetType.Image;
                             Entry.LoadMethod = ExportVoidImage;
-                            Entry.BuildPreviewTextureMethod = ImageTest;
+                            Entry.BuildPreviewTextureMethod = BuildPreviewImage;
                             Entry.InformationString = $"{Entry.EntryType}";
                             Assets.Add(Entry);
                         }
@@ -239,9 +239,13 @@ namespace Vex.Library.Package
             ExportManager.ExportBImage(img, Path.Combine(dir, Path.GetFileNameWithoutExtension(asset.DisplayName) + instance.GetImageExportFormat()), ImagePatch.NoPatch, instance);
         }
 
-        public ImageSource ImageTest(Asset asset, VexInstance instance)
+        public ImageSource BuildPreviewImage(Asset asset, VexInstance instance)
         {
             var Entry = asset as D2Entry;
+            if(Entry.AssetSize == 0)
+            {
+                return null;
+            }
             var output = ExtractEntry(Entry, instance);
             var img = new BImage(output, Path.GetFileName(Entry.Destination), instance);
             ImagePatch patch = ImagePatch.NoPatch;

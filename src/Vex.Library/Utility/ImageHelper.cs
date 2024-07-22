@@ -1,6 +1,7 @@
 ﻿using DirectXTex;
 using DirectXTexNet;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
@@ -27,23 +28,44 @@ namespace Vex.Library.Utility
 
         public static BitmapImage ConvertImage(BImage Image, ImagePatch patch)
         {
-            var ImageBuffer = AddDDSHeaderToBytes(Image.m_Slices[0].m_Content, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height, 1, Image.m_Opts.m_format.DirectXFormat);
-            using var scratchImage = ConvertToFormat(ImageBuffer, patch);
+            using var scratchImage = ConvertBImage(Image, patch);
             using var mem = scratchImage.SaveToWICMemory(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG));
-            return MakeBitmapImage(mem, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height);
+            return MakeBitmapImage(mem, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight);
         }
 
-        public static UnmanagedMemoryStream ConvertImageToStream(BImage Image)
+        public static UnmanagedMemoryStream ConvertImageToStream(BImage Image, ImagePatch patch)
         {
-            using var scratchImage = ConvertBImage(Image);
+            using var scratchImage = ConvertBImage(Image, patch);
             var mem = scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
             return mem;
         }
 
-        public static ScratchImage ConvertBImage(BImage Image)
+        public static ScratchImage ConvertBImage(BImage Image, ImagePatch patch)
         {
-            var ImageBuffer = AddDDSHeaderToBytes(Image.m_Slices[0].m_Content, (int)Image.m_Slices[0].m_Width, (int)Image.m_Slices[0].m_Height, 1, Image.m_Opts.m_format.DirectXFormat);
-            return ConvertToFormat(ImageBuffer);
+            var bytes = Image.m_Slices[0].m_Content;
+            bool IsCubemap = false;
+            if (Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_2D)
+            {
+                if (Image.m_Slices.Length > 0)
+                {
+                    bytes = Stitch2DMips(Image);
+                }
+            }
+            else if(Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_CUBIC)
+            {
+                if (Image.m_Slices.Length > 0)
+                {
+                    bytes = StitchCubemapMips(Image);
+                    IsCubemap = true;
+                }
+            }
+            else if (Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_3D)
+            {
+                throw new Exception("3D textures are not yet supported!");
+            }
+            var ImageBuffer = AddDDSHeaderToBytes(bytes, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight, (int)Image.m_Opts.m_curNumLevels, Image.m_Opts.m_format.DirectXFormat, IsCubemap);
+            
+            return ConvertToFormat(ImageBuffer, patch);
         }
 
         public static ScratchImage ConvertToFormat(byte[] array, ImagePatch Patch = ImagePatch.NoPatch)
@@ -91,9 +113,9 @@ namespace Vex.Library.Utility
         /// <param name="MipLevels">Number of Mips</param>
         /// <param name="ImageDataFormat">The format of the image</param>
         /// <returns></returns>
-        public static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, DirectXTexUtility.DXGIFormat ImageDataFormat)
+        public static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, DirectXTexUtility.DXGIFormat ImageDataFormat, bool IsCubemap = false)
         {
-            var metadata = DirectXTexUtility.GenerateMataData(ImageWidth, ImageHeight, MipLevels, ImageDataFormat, false);
+            var metadata = DirectXTexUtility.GenerateMataData(ImageWidth, ImageHeight, MipLevels, ImageDataFormat, IsCubemap);
             DirectXTexUtility.GenerateDDSHeader(metadata, DirectXTexUtility.DDSFlags.NONE, out var header, out var dx10h);
             var headerBuffer = DirectXTexUtility.EncodeDDSHeader(header, dx10h);
 
@@ -241,6 +263,46 @@ namespace Vex.Library.Utility
             bitmapImage.EndInit();
             bitmapImage.Freeze();
             return bitmapImage;
+        }
+
+        public static byte[] Stitch2DMips(BImage image)
+        {
+            if (image.m_Opts.m_type != BImage.ImageOptions.TYPE.TT_2D)
+                throw new Exception("The image is not a 2D texture!");
+
+            var result = new List<byte>();
+            uint ArraySize = image.m_Opts.m_arraySize;
+            uint MipsCount = image.m_Opts.m_curNumLevels;
+            for (uint SliceIndex = 0; SliceIndex < ArraySize; SliceIndex++)
+            {
+                for (uint MipLevelIndex = 0; MipLevelIndex < MipsCount; MipLevelIndex++)
+                {
+                    var Slice = image.m_Slices[MipLevelIndex * ArraySize + SliceIndex];
+
+                    result.AddRange(Slice.m_Content);
+                }
+            }
+            return [.. result];
+        }
+
+        public static byte[] StitchCubemapMips(BImage image)
+        {
+            if (image.m_Opts.m_type != BImage.ImageOptions.TYPE.TT_CUBIC)
+                throw new Exception("The image is not a 2D texture!");
+
+            var result = new List<byte>();
+            uint ArraySize = 6 * image.m_Opts.m_arraySize;
+            uint MipsCount = image.m_Opts.m_curNumLevels;
+            uint PixelSize = image.m_Opts.m_format.BitsCount >> 3;
+            for (uint SliceIndex = 0; SliceIndex < ArraySize; SliceIndex++)
+            {
+                for (uint MipLevelIndex = 0; MipLevelIndex < MipsCount; MipLevelIndex++)
+                {
+                    var Slice = image.m_Slices[MipLevelIndex * ArraySize + SliceIndex];
+                    result.AddRange(Slice.m_Content);
+                }
+            }
+            return [.. result];
         }
     }
 }
