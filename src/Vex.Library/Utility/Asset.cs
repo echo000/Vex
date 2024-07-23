@@ -137,7 +137,7 @@ namespace Vex.Library
         /// <summary>
         /// Gets the Asset Display Name
         /// </summary>
-        public string DisplayName => Path.GetFileName(Name);
+        public string DisplayName => Path.GetFileNameWithoutExtension(Name);
 
         public Brush StatusForegroundColor => Status switch
         {

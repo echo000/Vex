@@ -112,7 +112,7 @@ namespace Vex
 
             foreach (var mat in materials)
             {
-                if (mat.Textures.TryGetValue("DiffuseMap", out var Diffuse))
+                if (mat.Textures.TryGetValue("DiffuseMap", out var Diffuse) && instance.Settings.LoadImagesModel)
                 {
                     var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
                     if (image == null)
