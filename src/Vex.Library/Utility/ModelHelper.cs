@@ -78,8 +78,8 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            //Mesh.UVLayers.Add(UVV, v);
                             Mesh.UVLayers.Add(UVU, v);
+                            Mesh.UVLayers.Add(UVV, v);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
                         {
@@ -138,8 +138,8 @@ namespace Vex.Library.Utility
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            //Mesh.UVLayers.Add(UVV, v);
                             Mesh.UVLayers.Add(UVU, v);
+                            Mesh.UVLayers.Add(UVV, v);
                             var normal = Reader.ReadBytes(4);
                             Mesh.Normals.Add(new Vector3((sbyte)normal[0], (sbyte)normal[1], (sbyte)normal[2]) / 127f);
                             var tangent = Reader.ReadBytes(4); // Currently doing nothing with this
@@ -274,7 +274,7 @@ namespace Vex.Library.Utility
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             Mesh.UVLayers.Add(UVU, v);
-                            //Mesh.UVLayers.Add(UVV, v);
+                            Mesh.UVLayers.Add(UVV, v);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
                         {
@@ -332,7 +332,7 @@ namespace Vex.Library.Utility
                             var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             Mesh.UVLayers.Add(UVU, v);
-                            //Mesh.UVLayers.Add(UVV, v);
+                            Mesh.UVLayers.Add(UVV, v);
                             var normal = Reader.ReadBytes(4);
                             Mesh.Normals.Add(new Vector3((sbyte)normal[0], (sbyte)normal[1], (sbyte)normal[2]) / 127f);
                             var tangent = Reader.ReadBytes(4);

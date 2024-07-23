@@ -245,6 +245,14 @@ namespace Vex.Library.Package
             ExportManager.ExportBImage(img, Path.Combine(dir, Path.GetFileNameWithoutExtension(asset.DisplayName) + instance.GetImageExportFormat()), ImagePatch.NoPatch, instance);
         }
 
+        public void ExportMaterialAsset(Asset asset, VexInstance instance)
+        {
+            var Material = MaterialHelper.GetMaterialFromAsset(asset, instance);
+            var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Materials", Path.GetFileNameWithoutExtension(asset.DisplayName));
+            Directory.CreateDirectory(dir);
+            ExportManager.ExportMaterialImages(Material, dir, instance);
+        }
+
         public ImageSource BuildPreviewImage(Asset asset, VexInstance instance)
         {
             if(asset.AssetSize == 0)
@@ -325,8 +333,7 @@ namespace Vex.Library.Package
                     var dummy = Reader.ReadInt32();
                     //This is just the (uncompressed) size of the data
                     var xsize = Reader.ReadInt32();
-                    var SizeDiff = (int)(Reader.BaseStream.Position - Asset.AssetPointer);
-                    var bytesToRead = Asset.CompressedSize - SizeDiff;
+                    var bytesToRead = Asset.CompressedSize - 12;
                     ReadData = Reader.ReadBytes(bytesToRead);
                     output = Oodle.Decompress(ReadData, (int)Asset.AssetSize);
                 }

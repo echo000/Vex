@@ -45,9 +45,9 @@ namespace Vex.Library.Utility
 
         public static void ExportMaterialImages(Material material, string ImagesPath, VexInstance instance)
         {
-            var Patch = ImagePatch.NoPatch;
             foreach(var texture in material.Textures)
             {
+                var Patch = ImagePatch.NoPatch;
                 if (texture.Key == "NormalMap")
                     Patch = ImagePatch.Normal_Expand;
                 var path = Path.Combine(ImagesPath, $"{texture.Value.Name}{instance.GetImageExportFormat()}");

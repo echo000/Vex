@@ -16,7 +16,7 @@
     <Grid>
         <TextBlock x:Name="Message" Text="Exporting Assets" Margin="10,15,10,0" VerticalAlignment="Top" Height="43" TextAlignment="Center" FontSize="22"/>
         <Button x:Name="CancelButton" Content="Cancel" Margin="0,0,10,10" Click="CancelClick" VerticalAlignment="Bottom" ToolTip="Cancel the current task." HorizontalAlignment="Right" Width="75"/>
-        <Button x:Name="OpenButton" Content="Open Export Folder" Visibility="Visible" Margin="0,0,90,10" Click="OpenExportFolderClick" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="143"/>
+        <Button x:Name="OpenButton" Content="Open Export Folder" Visibility="Hidden" Margin="0,0,90,10" Click="OpenExportFolderClick" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="143"/>
         <ProgressBar x:Name="ProgressBar" Height="36" Margin="10,67,10,51"/>
     </Grid>
 </Window>

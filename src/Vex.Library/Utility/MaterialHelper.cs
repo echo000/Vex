@@ -58,10 +58,19 @@ namespace Vex.Library.Utility
         public static Material GetMaterial(string MaterialName, VexInstance instance)
         {
             var asset = instance.VoidSupport.GetEntryFromName(MaterialName);
-            var Material = new Material(Path.GetFileNameWithoutExtension(MaterialName));
+            if(asset != null)
+            {
+                return GetMaterialFromAsset(asset, instance);
+            }
+            return null;
+        }
+
+        public static Material GetMaterialFromAsset(Asset asset, VexInstance instance)
+        {
+            var Material = new Material(Path.GetFileNameWithoutExtension(asset.DisplayName));
             var bytes = instance.VoidSupport.ExtractEntry(asset, instance);
             var images = GetMaterialTextures(bytes);
-            foreach(var image in images)
+            foreach (var image in images)
             {
                 switch (image.Key)
                 {

@@ -22,17 +22,14 @@ namespace Vex.Library
             Resources = [];
             Entries = [];
         }
-
         public readonly string ResourcePath(ushort flags)
         {
             string Result = string.Empty;
-
             int index = (flags & 0x8000) != 0 ? Resources.Count - 1 : (int)(flags >> 2);
             if (Resources.Count > index)
             {
                 Result = Resources[index];
             }
-
             return Result;
         }
     }

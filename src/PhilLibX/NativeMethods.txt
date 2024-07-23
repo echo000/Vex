@@ -1,6 +1,0 @@
-﻿ReadProcessMemory
-OpenProcess
-CloseHandle
-EnumProcessModulesEx
-GetModuleInformation
-QueryFullProcessImageName

@@ -89,7 +89,7 @@ namespace Vex
                     Positions = new Vector3Collection(Mesh.Positions.Select(p => new Vector3(p.X, p.Y, p.Z))),
                     TriangleIndices = new IntCollection(Mesh.Faces.SelectMany(f => new[] { f.Item1, f.Item2, f.Item3 })),
                     Normals = new Vector3Collection(Mesh.Normals.Select(n => new Vector3(n.X, n.Y, n.Z))),
-                    TextureCoordinates = new Vector2Collection(Mesh.UVLayers.Select(uv => new Vector2(uv.X, uv.Y))),
+                    TextureCoordinates = new Vector2Collection(Mesh.Positions.Select((_, i) => new Vector2(Mesh.UVLayers[i, 0].X, Mesh.UVLayers[i, 0].Y)))
                 };
                 var material = CreateMaterial(Mesh.Materials, instance);
                 var MG = new MeshGeometryModel3D
@@ -113,9 +113,9 @@ namespace Vex
 
             foreach (var mat in materials)
             {
-                if (mat.Textures.TryGetValue("DiffuseMap", out var imgHash))
+                if (mat.Textures.TryGetValue("DiffuseMap", out var Diffuse))
                 {
-                    var image = instance.VoidSupport.GetEntryFromName(imgHash.FilePath);
+                    var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
                     if(image == null)
                     {
                         material.DiffuseColor = new Color4(
