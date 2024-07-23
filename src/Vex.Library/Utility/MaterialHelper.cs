@@ -2,10 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Vex.Library.Utility
 {
@@ -41,7 +37,7 @@ namespace Vex.Library.Utility
                     continue; // Skip empty lines and comments
                 }
 
-                var parts = line.Split([' ', '\t' ], 2, StringSplitOptions.RemoveEmptyEntries);
+                var parts = line.Split([' ', '\t'], 2, StringSplitOptions.RemoveEmptyEntries);
                 string key = parts[0].ToLower(); // Convert key to lowercase for case-insensitive matching
 
                 if (parts.Length == 2)
@@ -59,7 +55,7 @@ namespace Vex.Library.Utility
         public static Material GetMaterial(string MaterialName, VexInstance instance)
         {
             var asset = instance.VoidSupport.GetEntryFromName(MaterialName);
-            if(asset != null)
+            if (asset != null)
             {
                 return GetMaterialFromAsset(asset, instance);
             }

@@ -1,5 +1,4 @@
 ﻿using HelixToolkit.SharpDX.Core;
-using HelixToolkit.SharpDX.Core.Core;
 using HelixToolkit.Wpf.SharpDX;
 using PhilLibX.Media3D;
 using SharpDX;
@@ -116,13 +115,9 @@ namespace Vex
                 if (mat.Textures.TryGetValue("DiffuseMap", out var Diffuse))
                 {
                     var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
-                    if(image == null)
+                    if (image == null)
                     {
-                        material.DiffuseColor = new Color4(
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        1);
+                        material.DiffuseColor = GetRandomColor4();
                         continue;
                     }
                     var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
@@ -131,11 +126,7 @@ namespace Vex
                 }
                 else
                 {
-                    material.DiffuseColor = new Color4(
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        1);
+                    material.DiffuseColor = GetRandomColor4();
                 }
 /*                if (mat.Textures.TryGetValue("SpecularMap", out var specHash))
                 {
@@ -154,6 +145,15 @@ namespace Vex
             }
 
             return material;
+        }
+
+        private static Color4 GetRandomColor4()
+        {
+            return new Color4(
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        (byte)RandomInt.Next(128, 255) / 255f,
+                        1);
         }
 
         private static void ClearBindings(DependencyObject element)

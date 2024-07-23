@@ -222,7 +222,7 @@ namespace Vex.Library.Package
 
         public ImageSource BuildPreviewImage(Asset asset, VexInstance instance)
         {
-            if(asset.AssetSize == 0)
+            if (asset.AssetSize == 0)
             {
                 return null;
             }
@@ -344,11 +344,11 @@ namespace Vex.Library.Package
         public void ReloadAssets(VexInstance instance)
         {
             instance.Assets.Clear();
-            foreach(var container in Containers)
+            foreach (var container in Containers)
             {
-                foreach(var entry in container.Entries)
+                foreach (var entry in container.Entries)
                 {
-                    if(instance.ShouldLoad(entry.Type))
+                    if (instance.ShouldLoad(entry.Type))
                         instance.Assets.Add(entry);
                 }
             }
@@ -356,7 +356,7 @@ namespace Vex.Library.Package
 
         public void ExportEntry(Asset asset, VexInstance instance)
         {
-            switch(asset.Type)
+            switch (asset.Type)
             {
                 case AssetType.Image:
                     ExportVoidImage(asset, instance);

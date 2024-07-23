@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Vex.Library;
-using Vex.Library.Package;
 
 namespace Vex.Pages
 {

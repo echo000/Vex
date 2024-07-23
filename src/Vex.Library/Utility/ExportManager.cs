@@ -18,10 +18,10 @@ namespace Vex.Library.Utility
             var ImageRelativePath = instance.Settings.GlobalImages ? "..\\\\_Images\\\\" : "_Images\\\\";
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(ImagesPath);
-            foreach(var Material in Result.Materials)
+            foreach (var Material in Result.Materials)
             {
                 ExportMaterialImages(Material, ImagesPath, instance);
-                foreach(var texture in Material.Textures)
+                foreach (var texture in Material.Textures)
                 {
                     texture.Value.Name = $"{ImageRelativePath}{texture.Value.Name}{instance.GetImageExportFormat()}";
                 }
@@ -45,7 +45,7 @@ namespace Vex.Library.Utility
 
         public static void ExportMaterialImages(Material material, string ImagesPath, VexInstance instance)
         {
-            foreach(var texture in material.Textures)
+            foreach (var texture in material.Textures)
             {
                 var Patch = ImagePatch.NoPatch;
                 if (texture.Key == "NormalMap")

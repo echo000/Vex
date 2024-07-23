@@ -98,7 +98,7 @@ namespace PhilLibX.Media3D.Cast
 
                 if (skeleton != null)
                 {
-                    if(skeleton.Bones.Count > 0)
+                    if (skeleton.Bones.Count > 0)
                         AddSkeletonNodes(CastSkeleton, skeleton, boneCount, input.Scale);
                 }
 
@@ -178,8 +178,8 @@ namespace PhilLibX.Media3D.Cast
                         Colours.Write(BitConverter.ToInt32(col, 0));
                         Positions.Write(mesh.Positions[i]);
                         Normals.Write(mesh.Normals[i]);
-                        UVLayer1.Write(mesh.UVLayers[i,0]);
-                        UVLayer2.Write(mesh.UVLayers[i,1]);
+                        UVLayer1.Write(mesh.UVLayers[i, 0]);
+                        UVLayer2.Write(mesh.UVLayers[i, 1]);
 
                         if (skeleton != null)
                         {
@@ -503,12 +503,12 @@ namespace PhilLibX.Media3D.Cast
                 castTexture.SetProperty("p", texture.Name);
                 castMaterial.SetProperty(propertyKey, CastPropertyId.Integer64, castTexture.Hash);
             }
-/*            else
-            {
-                var castTexture = castMaterial.AddNode(CastNodeID.File, XXH64.DigestOf(Encoding.UTF8.GetBytes("")));
-                castTexture.SetProperty("p", "");
-                castMaterial.SetProperty(propertyKey, CastPropertyId.Integer64, castTexture.Hash);
-            }*/
+            /*            else
+                        {
+                            var castTexture = castMaterial.AddNode(CastNodeID.File, XXH64.DigestOf(Encoding.UTF8.GetBytes("")));
+                            castTexture.SetProperty("p", "");
+                            castMaterial.SetProperty(propertyKey, CastPropertyId.Integer64, castTexture.Hash);
+                        }*/
         }
 
         static CastPropertyId GetBoneIndexType(int boneCount)

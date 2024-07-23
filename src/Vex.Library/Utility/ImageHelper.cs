@@ -52,7 +52,7 @@ namespace Vex.Library.Utility
                     bytes = Stitch2DMips(Image);
                 }
             }
-            else if(Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_CUBIC)
+            else if (Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_CUBIC)
             {
                 if (Image.m_Slices.Length > 0)
                 {
@@ -65,7 +65,7 @@ namespace Vex.Library.Utility
                 throw new Exception("3D textures are not yet supported!");
             }
             var ImageBuffer = AddDDSHeaderToBytes(bytes, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight, (int)Image.m_Opts.m_curNumLevels, Image.m_Opts.m_format.DirectXFormat, IsCubemap);
-            
+
             return ConvertToFormat(ImageBuffer, patch);
         }
 
