@@ -45,15 +45,18 @@ namespace Vex.Library.Utility
 
         public static void ExportMaterialImages(Material material, string ImagesPath, VexInstance instance)
         {
+            var Patch = ImagePatch.NoPatch;
             foreach(var texture in material.Textures)
             {
+                if (texture.Key == "NormalMap")
+                    Patch = ImagePatch.Normal_Expand;
                 var path = Path.Combine(ImagesPath, $"{texture.Value.Name}{instance.GetImageExportFormat()}");
                 var ImageAsset = instance.VoidSupport.GetEntryFromName(texture.Value.FilePath);
                 if (ImageAsset != null)
                 {
                     var output = instance.VoidSupport.ExtractEntry(ImageAsset, instance);
                     var img = new BImage(output, Path.GetFileName(ImageAsset.Destination), instance);
-                    ExportBImage(img, path, ImagePatch.NoPatch, instance);
+                    ExportBImage(img, path, Patch, instance);
                 }
             }
         }

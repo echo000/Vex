@@ -278,7 +278,7 @@ namespace Vex.Library
                 {
                     case "name":
                         foreach (var value in item.Value)
-                            if (!assetName.Contains(value) && !assetName.Contains($"{FNV1a.Calculate64String(value)}"))
+                            if (!assetName.Contains(value))
                                 return false;
                         break;
                     case "type":
@@ -295,7 +295,7 @@ namespace Vex.Library
                 {
                     case "name":
                         foreach (var value in item.Value)
-                            if (assetName.Contains(value) && assetName.Contains($"{FNV1a.Calculate64String(value)}"))
+                            if (assetName.Contains(value))
                                 return false;
                         break;
                     case "type":

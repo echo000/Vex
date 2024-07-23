@@ -98,7 +98,8 @@ namespace PhilLibX.Media3D.Cast
 
                 if (skeleton != null)
                 {
-                    AddSkeletonNodes(CastSkeleton, skeleton, boneCount, input.Scale);
+                    if(skeleton.Bones.Count > 0)
+                        AddSkeletonNodes(CastSkeleton, skeleton, boneCount, input.Scale);
                 }
 
                 var BoneIndexType = GetBoneIndexType(boneCount);
@@ -137,10 +138,13 @@ namespace PhilLibX.Media3D.Cast
                     var MaxSkinInfluenceBuffer = 0;
 
                     // Iterate to dynamically calculate max weight influence
-                    for (int i = 0; i < mesh.Positions.Count; i++)
+                    if (skeleton != null)
                     {
-                        if (mesh.Influences.CountPerVertex(i) > MaxSkinInfluenceBuffer)
-                            MaxSkinInfluenceBuffer = mesh.Influences.CountPerVertex(i);
+                        for (int i = 0; i < mesh.Positions.Count; i++)
+                        {
+                            if (mesh.Influences.CountPerVertex(i) > MaxSkinInfluenceBuffer)
+                                MaxSkinInfluenceBuffer = mesh.Influences.CountPerVertex(i);
+                        }
                     }
 
                     byte MaterialCountBuffer = (byte)mesh.Materials.Count;
@@ -154,7 +158,9 @@ namespace PhilLibX.Media3D.Cast
                     var BoneIndices = CastMesh.AddProperty("wb", BoneIndexType);
                     var UVLayer = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
 
-                    CastMesh.SetProperty("mi", CastPropertyId.Byte, (byte)MaxSkinInfluenceBuffer);
+                    if (skeleton != null)
+                        CastMesh.SetProperty("mi", CastPropertyId.Byte, (byte)MaxSkinInfluenceBuffer);
+                    //These models seem to have 2 UV layers
                     CastMesh.SetProperty("ul", CastPropertyId.Byte, (byte)1);
 
                     for (int i = 0; i < VertCount; i++)
@@ -169,21 +175,24 @@ namespace PhilLibX.Media3D.Cast
                         Normals.Write(mesh.Normals[i]);
                         UVLayer.Write(mesh.UVLayers[i]);
 
-                        for (int w = 0; w < MaxSkinInfluenceBuffer; w++)
+                        if (skeleton != null)
                         {
-                            var (index, value) = mesh.Influences[i, w];
-
-                            switch (BoneIndexType)
+                            for (int w = 0; w < MaxSkinInfluenceBuffer; w++)
                             {
-                                case CastPropertyId.Byte:
-                                    BoneIndices.Write((byte)index);
-                                    BoneWeights.Write(value); break;
-                                case CastPropertyId.Short:
-                                    BoneIndices.Write((short)index);
-                                    BoneWeights.Write(value); break;
-                                case CastPropertyId.Integer32:
-                                    BoneIndices.Write((int)index);
-                                    BoneWeights.Write(value); break;
+                                var (index, value) = mesh.Influences[i, w];
+
+                                switch (BoneIndexType)
+                                {
+                                    case CastPropertyId.Byte:
+                                        BoneIndices.Write((byte)index);
+                                        BoneWeights.Write(value); break;
+                                    case CastPropertyId.Short:
+                                        BoneIndices.Write((short)index);
+                                        BoneWeights.Write(value); break;
+                                    case CastPropertyId.Integer32:
+                                        BoneIndices.Write((int)index);
+                                        BoneWeights.Write(value); break;
+                                }
                             }
                         }
                     }
@@ -196,19 +205,19 @@ namespace PhilLibX.Media3D.Cast
                         switch (FaceIndexType)
                         {
                             case CastPropertyId.Byte:
-                                FaceIndices.Write((byte)Face.Item3);
-                                FaceIndices.Write((byte)Face.Item2);
                                 FaceIndices.Write((byte)Face.Item1);
+                                FaceIndices.Write((byte)Face.Item2);
+                                FaceIndices.Write((byte)Face.Item3);
                                 break;
                             case CastPropertyId.Short:
-                                FaceIndices.Write((short)Face.Item3);
-                                FaceIndices.Write((short)Face.Item2);
                                 FaceIndices.Write((short)Face.Item1);
+                                FaceIndices.Write((short)Face.Item2);
+                                FaceIndices.Write((short)Face.Item3);
                                 break;
                             case CastPropertyId.Integer32:
-                                FaceIndices.Write(Face.Item3);
-                                FaceIndices.Write(Face.Item2);
                                 FaceIndices.Write(Face.Item1);
+                                FaceIndices.Write(Face.Item2);
+                                FaceIndices.Write(Face.Item3);
                                 break;
                         }
                     }
