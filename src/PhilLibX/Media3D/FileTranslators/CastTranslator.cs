@@ -121,6 +121,10 @@ namespace PhilLibX.Media3D.Cast
                     ProcessTexture(Material.Textures, "DiffuseMap", "albedo", CastMaterial);
                     ProcessTexture(Material.Textures, "NormalMap", "normal", CastMaterial);
                     ProcessTexture(Material.Textures, "SpecularMap", "specular", CastMaterial);
+                    ProcessTexture(Material.Textures, "EmissiveMap", "emissive", CastMaterial);
+                    ProcessTexture(Material.Textures, "GlossMap", "gloss", CastMaterial);
+                    ProcessTexture(Material.Textures, "RoughnessMap", "roughness", CastMaterial);
+                    ProcessTexture(Material.Textures, "OcclusionMap", "ao", CastMaterial);
                 }
 
                 int p = 0;
@@ -156,12 +160,13 @@ namespace PhilLibX.Media3D.Cast
                     var FaceIndices = CastMesh.AddProperty("f", FaceIndexType, VertCount * sizeof(int));
                     var BoneWeights = CastMesh.AddProperty("wv", CastPropertyId.Float, VertCount * sizeof(int));
                     var BoneIndices = CastMesh.AddProperty("wb", BoneIndexType);
-                    var UVLayer = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
+                    var UVLayer1 = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
+                    var UVLayer2 = CastMesh.AddProperty("u1", CastPropertyId.Vector2, VertCount * sizeof(float));
 
                     if (skeleton != null)
                         CastMesh.SetProperty("mi", CastPropertyId.Byte, (byte)MaxSkinInfluenceBuffer);
                     //These models seem to have 2 UV layers
-                    CastMesh.SetProperty("ul", CastPropertyId.Byte, (byte)1);
+                    CastMesh.SetProperty("ul", CastPropertyId.Byte, (byte)mesh.UVLayers.Dimension);
 
                     for (int i = 0; i < VertCount; i++)
                     {
@@ -173,7 +178,8 @@ namespace PhilLibX.Media3D.Cast
                         Colours.Write(BitConverter.ToInt32(col, 0));
                         Positions.Write(mesh.Positions[i]);
                         Normals.Write(mesh.Normals[i]);
-                        UVLayer.Write(mesh.UVLayers[i]);
+                        UVLayer1.Write(mesh.UVLayers[i,0]);
+                        UVLayer2.Write(mesh.UVLayers[i,1]);
 
                         if (skeleton != null)
                         {
@@ -497,12 +503,12 @@ namespace PhilLibX.Media3D.Cast
                 castTexture.SetProperty("p", texture.Name);
                 castMaterial.SetProperty(propertyKey, CastPropertyId.Integer64, castTexture.Hash);
             }
-            else
+/*            else
             {
                 var castTexture = castMaterial.AddNode(CastNodeID.File, XXH64.DigestOf(Encoding.UTF8.GetBytes("")));
                 castTexture.SetProperty("p", "");
                 castMaterial.SetProperty(propertyKey, CastPropertyId.Integer64, castTexture.Hash);
-            }
+            }*/
         }
 
         static CastPropertyId GetBoneIndexType(int boneCount)
