@@ -485,6 +485,15 @@ namespace Vex.Pages
         public void ReloadSettings()
         {
             Instance.Settings = VexSettings.Load("Settings.vcfg");
+            Instance.VoidSupport?.ReloadAssets(Instance);
+            RefreshAssets();
+        }
+
+        public void RefreshAssets()
+        {
+            ViewModel.Assets?.Clear();
+            ViewModel.Assets?.AddRange(Instance.Assets);
+            ProgressComplete(null);
         }
 
         private void OpenAboutWindow(object sender, RoutedEventArgs e)

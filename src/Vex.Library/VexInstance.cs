@@ -72,25 +72,24 @@ namespace Vex.Library
             {
                 case ".index":
                     VoidSupport = new VoidSupport();
-                    Assets.AddRange(VoidSupport.VoidMasterIndex(FileName, this));
-                    //Maybe add the cache here instead of having cached files in the support itself
-                    //Alternatively, have a Void Support member inside this class
+                    VoidSupport.VoidMasterIndex(FileName, this);
+                    VoidSupport.ReloadAssets(this);
                     break;
                 default:
                     throw new InvalidFileException();
             }
         }
 
-        public bool ShouldLoad(string Name)
+        public bool ShouldLoad(AssetType Name)
         {
             return Name switch
             {
-                "Image" => Settings.LoadImages,
-                "Model" => Settings.LoadModels,
-                "Material" => Settings.LoadMaterials,
-                "Animation" => Settings.LoadAnimations,
-                "Rawfile" => Settings.LoadRawFiles,
-                "Sound" => Settings.LoadSounds,
+                AssetType.Image => Settings.LoadImages,
+                AssetType.Model => Settings.LoadModels,
+                AssetType.Material => Settings.LoadMaterials,
+                AssetType.Animation => Settings.LoadAnimations,
+                AssetType.RawFile => Settings.LoadRawFiles,
+                AssetType.Sound => Settings.LoadSounds,
                 _ => false,
             };
         }

@@ -17,7 +17,7 @@ namespace Vex.Library.Package
         //These has to be a better way to do this
         List<VoidContainer> Containers;
 
-        public List<Asset> VoidMasterIndex(string FilePath, VexInstance instance)
+        public void VoidMasterIndex(string FilePath, VexInstance instance)
         {
             Containers = [];
             using var Stream = File.OpenRead(FilePath);
@@ -69,7 +69,7 @@ namespace Vex.Library.Package
                             Containers[index].Resources.Add(Name);
                         }
                     }
-                    return ParseVoidResources(instance);
+                    ParseVoidResources(instance.Game);
                 }
                 //Deathloop
                 else if (Header.Version == 0x3)
@@ -86,7 +86,7 @@ namespace Vex.Library.Package
                         var Name = Reader.ReadFixedPrefixString();
                         Containers[0].Resources.Add(Name);
                     }
-                    return ParseVoidResources(instance);
+                    ParseVoidResources(instance.Game);
                 }
             }
             finally
@@ -94,13 +94,10 @@ namespace Vex.Library.Package
                 Reader.Close();
                 Stream.Close();
             }
-
-            return null;
         }
 
-        public List<Asset> ParseVoidResources(VexInstance instance)
+        public void ParseVoidResources(SupportedGames Game)
         {
-            var Assets = new List<Asset>();
             var uniqueElements = new HashSet<string>();
             for (var ci = 0; ci < Containers.Count; ci++)
             {
@@ -118,7 +115,7 @@ namespace Vex.Library.Package
                     for (int i = 0; i < EntryCount; i++)
                     {
                         var Asset = new Asset();
-                        switch (instance.Game)
+                        switch (Game)
                         {
                             case SupportedGames.Dishonored2:
                                 Asset.Container = ci;
@@ -148,41 +145,31 @@ namespace Vex.Library.Package
                                 Asset.Flag2 = Reader.ReadInt16();
                                 break;
                         }
-
-                        if ((Asset.EntryType == "baseModel" || Asset.EntryType == "model") && instance.Settings.LoadModels)
+                        Asset.Status = AssetStatus.Loaded;
+                        if (Asset.EntryType == "baseModel" || Asset.EntryType == "model")
                         {
-                            Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Model;
                             Asset.InformationString = $"{Asset.EntryType}";
-                            Assets.Add(Asset);
                         }
-                        if (Asset.EntryType == "skeleton" && instance.Settings.LoadRawFiles)
+                        if (Asset.EntryType == "skeleton")
                         {
-                            Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.RawFile;
                             Asset.InformationString = $"{Asset.EntryType}";
-                            Assets.Add(Asset);
                         }
-                        if (Asset.EntryType == "image" /*&& !Entry.DisplayName.Contains("_mip")*/ && instance.Settings.LoadImages)
+                        if (Asset.EntryType == "image" && !Asset.DisplayName.Contains("_mip"))
                         {
-                            Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Image;
                             Asset.InformationString = $"{Asset.EntryType}";
-                            Assets.Add(Asset);
                         }
-                        if (Asset.EntryType == "anim" && instance.Settings.LoadAnimations)
+                        if (Asset.EntryType == "anim")
                         {
-                            Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Animation;
                             Asset.InformationString = $"{Asset.EntryType}";
-                            Assets.Add(Asset);
                         }
-                        if (Asset.EntryType == "material" && instance.Settings.LoadMaterials)
+                        if (Asset.EntryType == "material")
                         {
-                            Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Material;
                             Asset.InformationString = $"{Asset.EntryType}";
-                            Assets.Add(Asset);
                         }
                         //This adds all entries to the container so can take up a lot of space,
                         //I think we only need required types
@@ -197,7 +184,6 @@ namespace Vex.Library.Package
                     Stream.Close();
                 }
             }
-            return Assets;
         }
 
         public void ExportVoidModel(Asset asset, VexInstance instance)
@@ -353,6 +339,19 @@ namespace Vex.Library.Package
             var ImageEntry = Containers.SelectMany(c => c.Entries)
                 .FirstOrDefault(e => e.Name.Contains(match, StringComparison.CurrentCultureIgnoreCase));
             return ImageEntry;
+        }
+
+        public void ReloadAssets(VexInstance instance)
+        {
+            instance.Assets.Clear();
+            foreach(var container in Containers)
+            {
+                foreach(var entry in container.Entries)
+                {
+                    if(instance.ShouldLoad(entry.Type))
+                        instance.Assets.Add(entry);
+                }
+            }
         }
 
         public void ExportEntry(Asset asset, VexInstance instance)
