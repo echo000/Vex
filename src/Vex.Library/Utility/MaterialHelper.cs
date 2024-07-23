@@ -11,6 +11,18 @@ namespace Vex.Library.Utility
 {
     internal class MaterialHelper
     {
+        private static readonly HashSet<string> ValidTextureKeys = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "diffusemap",
+            "bumpmap",
+            "occlusionmap",
+            "emissivemap",
+            "roughnessmap",
+            "metallicmap",
+            "packedmap",
+            "glossmap"
+        };
+
         //Honestly this is probably the most hacky thing in the world
         public static Dictionary<string, string> GetMaterialTextures(byte[] data)
         {
@@ -19,7 +31,6 @@ namespace Vex.Library.Utility
             using var memoryStream = new MemoryStream(data);
             using var reader = new StreamReader(memoryStream);
             string line;
-            bool isInStateSection = false; // Flag for state section
 
             while ((line = reader.ReadLine()) != null)
             {
@@ -30,25 +41,15 @@ namespace Vex.Library.Utility
                     continue; // Skip empty lines and comments
                 }
 
-                var parts = line.Split([' ', '\t'], 2); // Split on whitespace, limit to 2 parts
+                var parts = line.Split([' ', '\t' ], 2, StringSplitOptions.RemoveEmptyEntries);
                 string key = parts[0].ToLower(); // Convert key to lowercase for case-insensitive matching
 
                 if (parts.Length == 2)
                 {
                     string value = parts[1];
-
-                    // Look for specific texture maps
-                    if (key.EndsWith("map") &&
-                        (key == "diffusemap" || key == "bumpmap" || key == "occlusionmap" || key == "emissivemap" || 
-                         key == "roughnessmap" || key == "metallicmap" || key == "packedmap" || key == "glossmap"))
+                    if (ValidTextureKeys.Contains(key))
                     {
-                        value = Regex.Replace(value, @"\s", ""); // Remove whitespace from texture path
-                        textures.Add(key, value);
-                    }
-                    // Handle state section (second format)
-                    else if (key == "state")
-                    {
-                        isInStateSection = true;
+                        textures.Add(key, value.Trim());
                     }
                 }
             }
