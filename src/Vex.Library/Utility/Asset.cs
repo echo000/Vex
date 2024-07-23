@@ -162,45 +162,6 @@ namespace Vex.Library
         };
 
         /// <summary>
-        /// Gets or Sets the method to load the Asset data
-        /// </summary>
-        public Action<Asset, VexInstance> LoadMethod { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the method to load the Asset data
-        /// </summary>
-        public Func<Asset, VexInstance, PhilLibX.Media3D.Model> BuildPreviewMethod { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the method to load the Asset data
-        /// </summary>
-        public Func<Asset, VexInstance, ImageSource> BuildPreviewTextureMethod { get; set; }
-
-        /// <summary>
-        /// Saves the Asset
-        /// </summary>
-        public virtual void Save(VexInstance instance)
-        {
-            LoadMethod?.Invoke(this, instance);
-        }
-
-        /// <summary>
-        /// Saves the Asset
-        /// </summary>
-        public virtual PhilLibX.Media3D.Model BuildPreview(VexInstance instance)
-        {
-            return BuildPreviewMethod?.Invoke(this, instance);
-        }
-
-        /// <summary>
-        /// Saves the Asset
-        /// </summary>
-        public virtual ImageSource BuildPreviewTexture(VexInstance instance)
-        {
-            return BuildPreviewTextureMethod?.Invoke(this, instance);
-        }
-
-        /// <summary>
         /// Clears loaded asset data
         /// </summary>
         public virtual void ClearData()

@@ -153,8 +153,6 @@ namespace Vex.Library.Package
                         {
                             Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Model;
-                            Asset.LoadMethod = ExportVoidModel;
-                            Asset.BuildPreviewMethod = BuildVoidModel;
                             Asset.InformationString = $"{Asset.EntryType}";
                             Assets.Add(Asset);
                         }
@@ -162,7 +160,6 @@ namespace Vex.Library.Package
                         {
                             Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.RawFile;
-                            Asset.LoadMethod = ExportAllAssetBytes;
                             Asset.InformationString = $"{Asset.EntryType}";
                             Assets.Add(Asset);
                         }
@@ -170,8 +167,6 @@ namespace Vex.Library.Package
                         {
                             Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Image;
-                            Asset.LoadMethod = ExportVoidImage;
-                            Asset.BuildPreviewTextureMethod = BuildPreviewImage;
                             Asset.InformationString = $"{Asset.EntryType}";
                             Assets.Add(Asset);
                         }
@@ -179,7 +174,6 @@ namespace Vex.Library.Package
                         {
                             Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Animation;
-                            Asset.LoadMethod = ExportAllAssetBytes;
                             Asset.InformationString = $"{Asset.EntryType}";
                             Assets.Add(Asset);
                         }
@@ -187,8 +181,6 @@ namespace Vex.Library.Package
                         {
                             Asset.Status = AssetStatus.Loaded;
                             Asset.Type = AssetType.Material;
-                            Asset.LoadMethod = ExportAllAssetBytes;
-                            Asset.BuildPreviewTextureMethod = PreviewVoidMaterial;
                             Asset.InformationString = $"{Asset.EntryType}";
                             Assets.Add(Asset);
                         }
@@ -214,17 +206,6 @@ namespace Vex.Library.Package
             var modelName = Path.GetFileNameWithoutExtension(asset.Destination);
             model.Name = modelName;
             ExportManager.ExportModel(model, modelName, instance);
-        }
-
-        public ImageSource PreviewVoidMaterial(Asset asset, VexInstance instance)
-        {
-            var output = ExtractEntry(asset, instance);
-            var p = MaterialHelper.GetMaterialTextures(output);
-            foreach(var k in p)
-            {
-                Trace.WriteLine($"{k.Key}: {k.Value}");
-            }
-            return null;
         }
 
         public void ExportAllAssetBytes(Asset asset, VexInstance instance)
@@ -372,6 +353,26 @@ namespace Vex.Library.Package
             var ImageEntry = Containers.SelectMany(c => c.Entries)
                 .FirstOrDefault(e => e.Name.Contains(match, StringComparison.CurrentCultureIgnoreCase));
             return ImageEntry;
+        }
+
+        public void ExportEntry(Asset asset, VexInstance instance)
+        {
+            switch(asset.Type)
+            {
+                case AssetType.Image:
+                    ExportVoidImage(asset, instance);
+                    break;
+                case AssetType.Model:
+                    ExportVoidModel(asset, instance);
+                    break;
+                case AssetType.Material:
+                    ExportMaterialAsset(asset, instance);
+                    break;
+                case AssetType.RawFile:
+                case AssetType.Animation:
+                    ExportAllAssetBytes(asset, instance);
+                    break;
+            }
         }
 
         public void Clear()

@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Vex.Library;
+using Vex.Library.Package;
 
 namespace Vex.Pages
 {
@@ -148,7 +149,7 @@ namespace Vex.Pages
         {
             try
             {
-                asset.Save(Instance);
+                Instance.VoidSupport.ExportEntry(asset, Instance);
                 Log($"Exported {asset.Name}", "INFO");
                 asset.Status = AssetStatus.Exported;
             }
@@ -386,7 +387,6 @@ namespace Vex.Pages
                             await LoadModelAsset(asset);
                             break;
                         case AssetType.Image:
-                        case AssetType.Material:
                             await LoadImageAsset(asset);
                             break;
                     }
@@ -402,18 +402,19 @@ namespace Vex.Pages
             }
         }
 
-        private async Task LoadModelAsset(Asset modelAsset)
+        private async Task LoadModelAsset(Asset asset)
         {
-            List<string> mapStages = [$"Loading model: {modelAsset.Name}", "Preparing renderer"];
+            List<string> mapStages = [$"Loading model: {asset.Name}", "Building model Textures", "Preparing renderer"];
             ModelViewer.Progress.SetProgressStages(mapStages);
 
-            var model = await Task.Run(() => modelAsset.BuildPreview(Instance));
+            var model = await Task.Run(() => Instance.VoidSupport.BuildVoidModel(asset, Instance));
             ModelViewer.Progress.CompleteStage();
 
             Dispatcher.Invoke(() =>
             {
                 ModelViewer.LoadModel(model, Instance);
-                ModelViewer.ViewModel.StatusText = $"Status     : Loaded {modelAsset.DisplayName}";
+                ModelViewer.Progress.CompleteStage();
+                ModelViewer.ViewModel.StatusText = $"Status     : Loaded {asset.DisplayName}";
                 ModelViewer.Viewport.SubTitle = $"Bones      : {(model.Skeleton != null ? model.Skeleton.Bones.Count : 0)}\n" +
                                                 $"Vertices   : {model.GetVertexCount()}\n" +
                                                 $"Faces      : {model.GetFaceCount()}\n" +
@@ -431,7 +432,7 @@ namespace Vex.Pages
             List<string> mapStages = [$"Loading Image: {asset.Name}", "Rendering Image"];
             ModelViewer.Progress.SetProgressStages(mapStages);
 
-            var imageSource = await Task.Run(() => asset.BuildPreviewTexture(Instance));
+            var imageSource = await Task.Run(() => Instance.VoidSupport.BuildPreviewImage(asset, Instance));
             ModelViewer.Progress.CompleteStage();
 
             Dispatcher.Invoke(() =>
