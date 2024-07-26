@@ -280,7 +280,7 @@ namespace Vex.Pages
             {
                 if (Instance.Assets != null)
                 {
-                    ViewModel.Assets.SendNotify();
+                    ViewModel.Assets?.SendNotify();
                     TaskLabel.Content = $"{Instance.Assets.Count} assets loaded";
                 }
                 else
@@ -491,7 +491,8 @@ namespace Vex.Pages
         public void RefreshAssets()
         {
             ViewModel.Assets?.Clear();
-            ViewModel.Assets?.AddRange(Instance.Assets);
+            if(Instance.Assets != null)
+                ViewModel.Assets?.AddRange(Instance.Assets);
             ProgressComplete(null);
         }
 

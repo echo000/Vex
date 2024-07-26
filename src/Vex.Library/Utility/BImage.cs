@@ -547,7 +547,7 @@ namespace Vex.Library.Utility
                 {
                     if (instance.Game == SupportedGames.Dishonored2)
                     {
-                        var bytes = instance.VoidSupport.ExtractEntry(ImageMips[i], instance);
+                        var bytes = instance.VoidSupport.ExtractEntryBytes(ImageMips[i], instance);
                         using var MipS = new MemoryStream(bytes);
                         using var MipR = new BinaryReader(MipS);
                         Slices.Add(new ImageSlice(this, MipR, 0U));
@@ -557,7 +557,7 @@ namespace Vex.Library.Utility
                     //based on the mip level
                     else
                     {
-                        var bytes = instance.VoidSupport.ExtractEntry(ImageMips[i], instance);
+                        var bytes = instance.VoidSupport.ExtractEntryBytes(ImageMips[i], instance);
                         Slices.Add(new ImageSlice(this, bytes, i, m_Opts.m_maxWidth / (uint)(i + 1), m_Opts.m_maxHeight / (uint)(i + 1)));
                     }
                 }

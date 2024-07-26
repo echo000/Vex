@@ -1,6 +1,7 @@
 ﻿using DirectXTexNet;
 using PhilLibX.Media3D;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Vex.Library.Utility
 {
@@ -42,10 +43,9 @@ namespace Vex.Library.Utility
             instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
         }
 
-
         public static void ExportMaterialImages(Material material, string ImagesPath, VexInstance instance)
         {
-            foreach (var texture in material.Textures)
+            Parallel.ForEach(material.Textures, (texture) =>
             {
                 var Patch = ImagePatch.NoPatch;
                 if (texture.Key == "NormalMap")
@@ -54,11 +54,11 @@ namespace Vex.Library.Utility
                 var ImageAsset = instance.VoidSupport.GetEntryFromName(texture.Value.FilePath);
                 if (ImageAsset != null)
                 {
-                    var output = instance.VoidSupport.ExtractEntry(ImageAsset, instance);
+                    var output = instance.VoidSupport.ExtractEntryBytes(ImageAsset, instance);
                     var img = new BImage(output, Path.GetFileName(ImageAsset.Destination), instance);
                     ExportBImage(img, path, Patch, instance);
                 }
-            }
+            });
         }
 
         public static void ExportAnimation(Animation animation, string OutputFolder, string name, VexInstance instance)

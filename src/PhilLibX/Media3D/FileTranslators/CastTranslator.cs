@@ -286,13 +286,11 @@ namespace PhilLibX.Media3D.Cast
                         {
                             if (bone.TransformType != TransformType.Parent && bone.TransformType != animationType)
                             {
-                                // Convert to SEAnim Type
                                 switch (bone.TransformType)
                                 {
                                     case TransformType.Absolute: boneModifiers[bone.BoneName] = 0; break;
                                     case TransformType.Additive: boneModifiers[bone.BoneName] = 1; break;
                                     case TransformType.Relative: boneModifiers[bone.BoneName] = 2; break;
-                                    case TransformType.Delta: boneModifiers[bone.BoneName] = 3; break;
                                 }
                             }
                         }

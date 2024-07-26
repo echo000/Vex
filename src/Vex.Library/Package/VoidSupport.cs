@@ -196,7 +196,7 @@ namespace Vex.Library.Package
 
         public void ExportAllAssetBytes(Asset asset, VexInstance instance)
         {
-            var output = ExtractEntry(asset, instance);
+            var output = ExtractEntryBytes(asset, instance);
             var dir = Path.Combine(instance.Settings.ExportDirectory, instance.GetGameName(), asset.EntryType, Path.GetDirectoryName(asset.Destination));
             Directory.CreateDirectory(dir);
             var AssetPath = Path.Combine(instance.Settings.ExportDirectory, instance.GetGameName(), asset.EntryType, asset.Destination);
@@ -205,7 +205,7 @@ namespace Vex.Library.Package
 
         public void ExportVoidImage(Asset asset, VexInstance instance)
         {
-            var output = ExtractEntry(asset, instance);
+            var output = ExtractEntryBytes(asset, instance);
             var img = new BImage(output, Path.GetFileName(asset.Destination), instance);
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Images");
             Directory.CreateDirectory(dir);
@@ -226,7 +226,7 @@ namespace Vex.Library.Package
             {
                 return null;
             }
-            var output = ExtractEntry(asset, instance);
+            var output = ExtractEntryBytes(asset, instance);
             var img = new BImage(output, Path.GetFileName(asset.Destination), instance);
             ImagePatch patch = ImagePatch.NoPatch;
             if (Path.GetFileNameWithoutExtension(asset.DisplayName).EndsWith("_n") && instance.Settings.PatchNormals)
@@ -244,14 +244,14 @@ namespace Vex.Library.Package
             {
                 return null;
             }
-            var output = ExtractEntry(asset, instance);
+            var output = ExtractEntryBytes(asset, instance);
             var img = new BImage(output, Path.GetFileName(asset.Destination), instance);
             return img;
         }
 
         public Model BuildVoidModel(Asset asset, VexInstance instance)
         {
-            var output = ExtractEntry(asset, instance);
+            var output = ExtractEntryBytes(asset, instance);
             var model = instance.Game == SupportedGames.Dishonored2 ? ModelHelper.BuildDishonoredPreviewModel(output, instance, out string SkeletonPath) : ModelHelper.BuildDeathloopPreviewModel(output, instance, out SkeletonPath);
             if (!string.IsNullOrWhiteSpace(SkeletonPath))
             {
@@ -259,7 +259,7 @@ namespace Vex.Library.Package
                     .FirstOrDefault(e => e.Name == SkeletonPath);
                 if (SkeletonEntry != null)
                 {
-                    var SkeletonBytes = ExtractEntry(SkeletonEntry, instance);
+                    var SkeletonBytes = ExtractEntryBytes(SkeletonEntry, instance);
                     //Improve this
                     var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
                     model.Skeleton = skeleton;
@@ -283,7 +283,7 @@ namespace Vex.Library.Package
             NativeMethods.SetOodleLibrary("oo2core_8_win64.dll");
         }
 
-        public byte[] ExtractEntry(Asset Asset, VexInstance instance)
+        public byte[] ExtractEntryBytes(Asset Asset, VexInstance instance)
         {
             byte[] output;
             var container = Containers[Asset.Container];
@@ -327,6 +327,15 @@ namespace Vex.Library.Package
             }
         }
 
+        public void ExportVoidAnimation(Asset asset, VexInstance instance)
+        {
+            var animation = Utility.AnimationHelper.ExtractAnimation(asset, instance);
+            var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
+            var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Animations");
+            Directory.CreateDirectory(dir);
+            ExportManager.ExportAnimation(animation, dir, animationName, instance);
+        }
+
         public List<Asset> GetEntriesFromName(string match)
         {
             var ImageEntries = Containers.SelectMany(c => c.Entries)
@@ -368,8 +377,10 @@ namespace Vex.Library.Package
                     ExportMaterialAsset(asset, instance);
                     break;
                 case AssetType.RawFile:
-                case AssetType.Animation:
                     ExportAllAssetBytes(asset, instance);
+                    break;
+                case AssetType.Animation:
+                    ExportVoidAnimation(asset, instance);
                     break;
             }
         }
