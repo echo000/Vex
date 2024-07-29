@@ -103,252 +103,248 @@ namespace Vex.Library.Utility
             public bool HasStencil { get { return m_swizzle == Swizzle.DEPTH_STENCIL; } }
             public bool Is_sRGB { get { return m_type == Type.UNORM_sRGB; } }
 
-            public uint BitsCount
+            public uint GetBitsCount()
             {
-                get
+                return m_layout switch
                 {
-                    return m_layout switch
-                    {
-                        Layout.LAYOUT_8 => 8,
-                        Layout.LAYOUT_16 => 16,
-                        Layout.LAYOUT_32 => 32,
-                        Layout.LAYOUT_8_8 => 16,
-                        Layout.LAYOUT_16_16 => 32,
-                        Layout.LAYOUT_32_32 => 64,
-                        Layout.LAYOUT_8_8_8 => 24,
-                        Layout.LAYOUT_16_16_16 => 48,
-                        Layout.LAYOUT_32_32_32 => 96,
-                        Layout.LAYOUT_8_8_8_8 => 32,
-                        Layout.LAYOUT_16_16_16_16 => 64,
-                        Layout.LAYOUT_32_32_32_32 => 128,
-                        Layout.LAYOUT_10_10_10_2 => 32,
-                        Layout.LAYOUT_R11G11B10 => 32,
-                        //	case ARK_GFX_FORMAT_LAYOUT_4_4_4_4: return 16;
-                        //	case ARK_GFX_FORMAT_LAYOUT_5_6_5: return 16;
-                        //	case ARK_GFX_FORMAT_LAYOUT_5_5_5_1: return 16;
-                        //TODO find BCn sizes
-                        Layout.LAYOUT_BC1 => 4,
-                        Layout.LAYOUT_BC2 => 8,
-                        Layout.LAYOUT_BC3 => 8,
-                        Layout.LAYOUT_BC4 => 4,
-                        Layout.LAYOUT_BC5 => 8,
-                        Layout.LAYOUT_BC6 => 8,
-                        Layout.LAYOUT_BC7 => 8,
-                        /*case ARK_GFX_FORMAT_LAYOUT_24_8: return 32;
-                        case ARK_GFX_FORMAT_LAYOUT_16_8: return 32;*/
-                        _ => throw new Exception("Invalid Format"),
-                    };
-                }
+                    Layout.LAYOUT_8 => 8,
+                    Layout.LAYOUT_16 => 16,
+                    Layout.LAYOUT_32 => 32,
+                    Layout.LAYOUT_8_8 => 16,
+                    Layout.LAYOUT_16_16 => 32,
+                    Layout.LAYOUT_32_32 => 64,
+                    Layout.LAYOUT_8_8_8 => 24,
+                    Layout.LAYOUT_16_16_16 => 48,
+                    Layout.LAYOUT_32_32_32 => 96,
+                    Layout.LAYOUT_8_8_8_8 => 32,
+                    Layout.LAYOUT_16_16_16_16 => 64,
+                    Layout.LAYOUT_32_32_32_32 => 128,
+                    Layout.LAYOUT_10_10_10_2 => 32,
+                    Layout.LAYOUT_R11G11B10 => 32,
+                    //	case ARK_GFX_FORMAT_LAYOUT_4_4_4_4: return 16;
+                    //	case ARK_GFX_FORMAT_LAYOUT_5_6_5: return 16;
+                    //	case ARK_GFX_FORMAT_LAYOUT_5_5_5_1: return 16;
+                    //TODO find BCn sizes
+                    Layout.LAYOUT_BC1 => 4,
+                    Layout.LAYOUT_BC2 => 8,
+                    Layout.LAYOUT_BC3 => 8,
+                    Layout.LAYOUT_BC4 => 4,
+                    Layout.LAYOUT_BC5 => 8,
+                    Layout.LAYOUT_BC6 => 8,
+                    Layout.LAYOUT_BC7 => 8,
+                    /*case ARK_GFX_FORMAT_LAYOUT_24_8: return 32;
+                    case ARK_GFX_FORMAT_LAYOUT_16_8: return 32;*/
+                    _ => throw new Exception("Invalid Format"),
+                };
             }
 
-            public DirectXTexUtility.DXGIFormat DirectXFormat
+            public DirectXTexUtility.DXGIFormat GetDirectXFormat()
             {
-                get
+                switch (m_layout)
                 {
-                    switch (m_layout)
-                    {
-                        case Layout.LAYOUT_8:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8UNORM;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8SNORM;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R8UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R8SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_8_8:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8G8UNORM;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8G8SNORM;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R8G8UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R8G8SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8G8TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_8_8_8_8:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8G8B8A8UNORM;
-                                    case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.R8G8B8A8UNORMSRGB;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8G8B8A8SNORM;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R8G8B8A8UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R8G8B8A8SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8G8B8A8TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_16:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16UNORM;
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16FLOAT;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R16UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R16SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_16_16:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16G16UNORM;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.R16G16SNORM;
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16G16FLOAT;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R16G16UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R16G16SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16G16TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_16_16_16_16:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16G16B16A16UNORM;
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16G16B16A16FLOAT;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.R16G16B16A16SNORM;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R16G16B16A16UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R16G16B16A16SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16G16B16A16TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_32:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32FLOAT;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R32UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R32SINT;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_32_32:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32G32FLOAT;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R32G32UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R32G32SINT;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_32_32_32_32:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32G32B32A32FLOAT;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R32G32B32A32UINT;
-                                    case Type.SINT: return DirectXTexUtility.DXGIFormat.R32G32B32A32SINT;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R32G32B32A32TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_10_10_10_2:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R10G10B10A2TYPELESS;
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.R10G10B10A2UNORM;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.R10G10B10A2UINT;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_24_8:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R24G8TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_32_8:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R32G8X24TYPELESS;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_R11G11B10:
-                            {
-                                switch (m_type)
-                                {
-                                    case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R11G11B10FLOAT;
-                                }
-                                break;
-                            }
-                        case Layout.LAYOUT_BC1:
+                    case Layout.LAYOUT_8:
+                        {
                             switch (m_type)
                             {
-                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC1UNORM;
-                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC1TYPELESS;
-                                case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC1UNORMSRGB;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8UNORM;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8SNORM;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R8UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R8SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8TYPELESS;
                             }
                             break;
-                        case Layout.LAYOUT_BC3:
+                        }
+                    case Layout.LAYOUT_8_8:
+                        {
+                            switch (m_type)
                             {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC3UNORM;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC3TYPELESS;
-                                    case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC3UNORMSRGB;
-                                }
-                                break;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8G8UNORM;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8G8SNORM;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R8G8UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R8G8SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8G8TYPELESS;
                             }
-                        case Layout.LAYOUT_BC4:
+                            break;
+                        }
+                    case Layout.LAYOUT_8_8_8_8:
+                        {
+                            switch (m_type)
                             {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC4UNORM;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC4TYPELESS;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC4SNORM;
-                                }
-                                break;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R8G8B8A8UNORM;
+                                case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.R8G8B8A8UNORMSRGB;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.R8G8B8A8SNORM;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R8G8B8A8UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R8G8B8A8SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R8G8B8A8TYPELESS;
                             }
-                        case Layout.LAYOUT_BC5:
+                            break;
+                        }
+                    case Layout.LAYOUT_16:
+                        {
+                            switch (m_type)
                             {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC5UNORM;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC5SNORM;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC5TYPELESS;
-                                }
-                                break;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16UNORM;
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16FLOAT;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R16UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R16SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16TYPELESS;
                             }
-                        case Layout.LAYOUT_BC6:
+                            break;
+                        }
+                    case Layout.LAYOUT_16_16:
+                        {
+                            switch (m_type)
                             {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC6HUF16;
-                                    case Type.UINT: return DirectXTexUtility.DXGIFormat.BC6HUF16;
-                                    case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC6HSF16;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC6HTYPELESS;
-                                }
-                                break;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16G16UNORM;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.R16G16SNORM;
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16G16FLOAT;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R16G16UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R16G16SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16G16TYPELESS;
                             }
-                        case Layout.LAYOUT_BC7:
+                            break;
+                        }
+                    case Layout.LAYOUT_16_16_16_16:
+                        {
+                            switch (m_type)
                             {
-                                switch (m_type)
-                                {
-                                    case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC7UNORM;
-                                    case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC7UNORMSRGB;
-                                    case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC7TYPELESS;
-                                }
-                                break;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R16G16B16A16UNORM;
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R16G16B16A16FLOAT;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.R16G16B16A16SNORM;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R16G16B16A16UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R16G16B16A16SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R16G16B16A16TYPELESS;
                             }
-                    }
-                    throw new Exception("Unsupported image format " + ToString());
+                            break;
+                        }
+                    case Layout.LAYOUT_32:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32FLOAT;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R32UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R32SINT;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_32_32:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32G32FLOAT;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R32G32UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R32G32SINT;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_32_32_32_32:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R32G32B32A32FLOAT;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R32G32B32A32UINT;
+                                case Type.SINT: return DirectXTexUtility.DXGIFormat.R32G32B32A32SINT;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R32G32B32A32TYPELESS;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_10_10_10_2:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R10G10B10A2TYPELESS;
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.R10G10B10A2UNORM;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.R10G10B10A2UINT;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_24_8:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R24G8TYPELESS;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_32_8:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.R32G8X24TYPELESS;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_R11G11B10:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.FLOAT: return DirectXTexUtility.DXGIFormat.R11G11B10FLOAT;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_BC1:
+                        switch (m_type)
+                        {
+                            case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC1UNORM;
+                            case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC1TYPELESS;
+                            case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC1UNORMSRGB;
+                        }
+                        break;
+                    case Layout.LAYOUT_BC3:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC3UNORM;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC3TYPELESS;
+                                case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC3UNORMSRGB;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_BC4:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC4UNORM;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC4TYPELESS;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC4SNORM;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_BC5:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC5UNORM;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC5SNORM;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC5TYPELESS;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_BC6:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC6HUF16;
+                                case Type.UINT: return DirectXTexUtility.DXGIFormat.BC6HUF16;
+                                case Type.SNORM: return DirectXTexUtility.DXGIFormat.BC6HSF16;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC6HTYPELESS;
+                            }
+                            break;
+                        }
+                    case Layout.LAYOUT_BC7:
+                        {
+                            switch (m_type)
+                            {
+                                case Type.UNORM: return DirectXTexUtility.DXGIFormat.BC7UNORM;
+                                case Type.UNORM_sRGB: return DirectXTexUtility.DXGIFormat.BC7UNORMSRGB;
+                                case Type.TYPELESS: return DirectXTexUtility.DXGIFormat.BC7TYPELESS;
+                            }
+                            break;
+                        }
+                    default:
+                        throw new Exception("Unsupported image format " + ToString());
                 }
+                throw new Exception("Unsupported image format " + ToString());
             }
 
             public void Read(BinaryReader Reader)
@@ -498,7 +494,7 @@ namespace Vex.Library.Utility
                 m_Height = Reader.ReadUInt32();
 
                 int ContentSize = (int)Reader.ReadUInt32();
-                if (!m_Owner.m_Opts.m_format.IsDepth && ContentSize != m_Width * m_Height * (m_Owner.m_Opts.m_format.BitsCount / 8f))
+                if (!m_Owner.m_Opts.m_format.IsDepth && ContentSize != m_Width * m_Height * (m_Owner.m_Opts.m_format.GetBitsCount() / 8f))
                     throw new Exception("Unexpected content size!");
 
                 m_Content = new byte[ContentSize];

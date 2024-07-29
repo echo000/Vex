@@ -17,6 +17,19 @@ namespace Vex.Library.Package
         //These has to be a better way to do this
         List<VoidContainer> Containers;
 
+        readonly Dictionary<string, AssetType> EntryTypeToAssetType = new()
+        {
+            { "baseModel", AssetType.Model },
+            { "model", AssetType.Model },
+            { "skeleton", AssetType.RawFile },
+            { "anim", AssetType.Animation },
+            { "material", AssetType.Material },
+/*            { "animSet" , AssetType.RawFile },
+            { "animBasic" , AssetType.RawFile },
+            { "animTree" , AssetType.RawFile },
+            { "loco" , AssetType.RawFile }*/
+        };
+
         public void VoidMasterIndex(string FilePath, VexInstance instance)
         {
             Containers = [];
@@ -114,11 +127,14 @@ namespace Vex.Library.Package
                     var EntryCount = Reader.ReadBEInt32();
                     for (int i = 0; i < EntryCount; i++)
                     {
-                        var Asset = new Asset();
+                        var Asset = new Asset
+                        {
+                            Status = AssetStatus.Loaded,
+                            Container = ci,
+                        };
                         switch (Game)
                         {
                             case SupportedGames.Dishonored2:
-                                Asset.Container = ci;
                                 Asset.Id = Reader.ReadBEUInt32();
                                 Asset.EntryType = Reader.ReadFixedPrefixString();
                                 Asset.Name = Reader.ReadFixedPrefixString();
@@ -131,7 +147,6 @@ namespace Vex.Library.Package
                                 Asset.Flag2 = Reader.ReadBEInt16();
                                 break;
                             case SupportedGames.Deathloop:
-                                Asset.Container = ci;
                                 Asset.Id = Reader.ReadUInt32();
                                 Asset.EntryType = Reader.ReadFixedPrefixString();
                                 Asset.Name = Reader.ReadFixedPrefixString();
@@ -145,36 +160,19 @@ namespace Vex.Library.Package
                                 Asset.Flag2 = Reader.ReadInt16();
                                 break;
                         }
-                        Asset.Status = AssetStatus.Loaded;
-                        if (Asset.EntryType == "baseModel" || Asset.EntryType == "model")
+                        Asset.InformationString = $"{Asset.EntryType}";
+                        if (EntryTypeToAssetType.TryGetValue(Asset.EntryType, out var assetType))
                         {
-                            Asset.Type = AssetType.Model;
-                            Asset.InformationString = $"{Asset.EntryType}";
+                            Asset.Type = assetType;
                         }
-                        if (Asset.EntryType == "skeleton")
-                        {
-                            Asset.Type = AssetType.RawFile;
-                            Asset.InformationString = $"{Asset.EntryType}";
-                        }
-                        if (Asset.EntryType == "image" && !Asset.DisplayName.Contains("_mip"))
+                        else if (Asset.EntryType == "image" && !Asset.DisplayName.Contains("_mip"))
                         {
                             Asset.Type = AssetType.Image;
-                            Asset.InformationString = $"{Asset.EntryType}";
                         }
-                        if (Asset.EntryType == "anim")
+                        if (uniqueElements.Add(Asset.EntryType))
                         {
-                            Asset.Type = AssetType.Animation;
-                            Asset.InformationString = $"{Asset.EntryType}";
+                            Trace.WriteLine(Asset.EntryType);
                         }
-                        if (Asset.EntryType == "material")
-                        {
-                            Asset.Type = AssetType.Material;
-                            Asset.InformationString = $"{Asset.EntryType}";
-                        }
-                        //This adds all entries to the container so can take up a lot of space,
-                        //I think we only need required types
-                        //model, material, image, anim + their required types - Skeleton, image
-                        //Then can switch what is shown in the UI based on user settings
                         container.Entries.Add(Asset);
                     }
                 }
@@ -212,7 +210,7 @@ namespace Vex.Library.Package
             ExportManager.ExportBImage(img, Path.Combine(dir, Path.GetFileNameWithoutExtension(asset.DisplayName) + instance.GetImageExportFormat()), ImagePatch.NoPatch, instance);
         }
 
-        public void ExportMaterialAsset(Asset asset, VexInstance instance)
+        public static void ExportMaterialAsset(Asset asset, VexInstance instance)
         {
             var Material = MaterialHelper.GetMaterialFromAsset(asset, instance);
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Materials", Path.GetFileNameWithoutExtension(asset.DisplayName));
@@ -234,7 +232,6 @@ namespace Vex.Library.Package
                 patch = ImagePatch.Normal_Expand;
             }
             var Result = ImageHelper.ConvertImage(img, patch);
-            Trace.WriteLine(img);
             return Result;
         }
 
@@ -327,9 +324,9 @@ namespace Vex.Library.Package
             }
         }
 
-        public void ExportVoidAnimation(Asset asset, VexInstance instance)
+        public static void ExportVoidAnimation(Asset asset, VexInstance instance)
         {
-            var animation = Utility.AnimationHelper.ExtractAnimation(asset, instance);
+            var animation = Utility.AnimationUtils.ExtractAnimation(asset, instance);
             var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Animations");
             Directory.CreateDirectory(dir);
@@ -345,8 +342,7 @@ namespace Vex.Library.Package
 
         public Asset GetEntryFromName(string match)
         {
-            var ImageEntry = Containers.SelectMany(c => c.Entries)
-                .FirstOrDefault(e => e.Name.Contains(match, StringComparison.CurrentCultureIgnoreCase));
+            var ImageEntry = Containers.SelectMany(c => c.Entries).FirstOrDefault(e => e.Name.Contains(match, StringComparison.CurrentCultureIgnoreCase));
             return ImageEntry;
         }
 

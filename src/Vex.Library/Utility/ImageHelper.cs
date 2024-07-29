@@ -64,7 +64,7 @@ namespace Vex.Library.Utility
             {
                 throw new Exception("3D textures are not yet supported!");
             }
-            var ImageBuffer = AddDDSHeaderToBytes(bytes, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight, (int)Image.m_Opts.m_curNumLevels, Image.m_Opts.m_format.DirectXFormat, IsCubemap);
+            var ImageBuffer = AddDDSHeaderToBytes(bytes, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight, (int)Image.m_Opts.m_curNumLevels, Image.m_Opts.m_format.GetDirectXFormat(), IsCubemap);
 
             return ConvertToFormat(ImageBuffer, patch);
         }
