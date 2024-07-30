@@ -183,7 +183,15 @@ namespace Vex.Library.Utility
                 }
 
                 var numMaterials = Reader.ReadInt32();
-
+                if(numMaterials == 0)
+                {
+                    var Material = new Material("CastMaterial");
+                    ResultModel.Materials.Add(Material);
+                    for(int i = 0; i < ResultModel.Meshes.Count; i++)
+                    {
+                        ResultModel.Meshes[i].Materials.Add(Material);
+                    }
+                }
                 for (int i = 0; i < numMaterials; i++)
                 {
                     var MaterialPath = Reader.ReadFixedPrefixString();

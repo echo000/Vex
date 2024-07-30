@@ -25,10 +25,6 @@ namespace Vex.Library.Package
             { "skeleton", AssetType.RawFile },
             { "anim", AssetType.Animation },
             { "material", AssetType.Material },
-/*            { "animSet" , AssetType.RawFile },
-            { "animBasic" , AssetType.RawFile },
-            { "animTree" , AssetType.RawFile },
-            { "loco" , AssetType.RawFile }*/
         };
 
         public void VoidMasterIndex(string FilePath, VexInstance instance)
@@ -121,6 +117,7 @@ namespace Vex.Library.Package
                 try
                 {
                     var Magic = Reader.ReadBEInt32();
+                    //First byte is type of file (0x04 for index, 0x05 for resource)
                     if (Magic != 0x05534552)
                         throw new Exception();
                     Reader.Advance(28);
@@ -259,7 +256,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractEntryBytes(SkeletonEntry, instance);
                     //Improve this
-                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
+                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes);
                     model.Skeleton = skeleton;
                 }
             }

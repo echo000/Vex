@@ -1,5 +1,6 @@
 ﻿using DirectXTexNet;
 using PhilLibX.Media3D;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -27,19 +28,14 @@ namespace Vex.Library.Utility
                     texture.Value.Name = $"{ImageRelativePath}{texture.Value.Name}{instance.GetImageExportFormat()}";
                 }
             }
-            string format = "";
-            switch ((MdlExportFormat)instance.Settings.ModelExportFormat)
+
+            string format = (MdlExportFormat)instance.Settings.ModelExportFormat switch
             {
-                case MdlExportFormat.XMODEL:
-                    format = ".xmodel_export";
-                    break;
-                case MdlExportFormat.SEMODEL:
-                    format = ".semodel";
-                    break;
-                case MdlExportFormat.CAST:
-                    format = ".cast";
-                    break;
-            }
+                MdlExportFormat.XMODEL => ".xmodel_export",
+                MdlExportFormat.SEMODEL => ".semodel",
+                MdlExportFormat.CAST => ".cast",
+                _ => throw new Exception("Invalid export format")
+            };
             instance.Translator.Save($"{dir}\\{Result.Name}{format}", Result);
         }
 
@@ -63,41 +59,14 @@ namespace Vex.Library.Utility
 
         public static void ExportAnimation(Animation animation, string OutputFolder, string name, VexInstance instance)
         {
-            var extension = "";
-            switch ((AnimExportFormat)instance.Settings.AnimationExportFormat)
+            string format = (AnimExportFormat)instance.Settings.AnimationExportFormat switch
             {
-                case AnimExportFormat.CAST:
-                    extension = ".cast";
-                    break;
-                case AnimExportFormat.SEANIM:
-                    extension = ".seanim";
-                    break;
-                case AnimExportFormat.XANIM:
-                    extension = ".xanim_export";
-                    break;
-            }
-            instance.Translator.Save($"{OutputFolder}\\{name}{extension}", animation);
-        }
-
-        public static void ExportImageFromByte(byte[] array, string OutputFile, ImagePatch Patch, VexInstance instance)
-        {
-            using var scratchImage = ImageHelper.ConvertToFormat(array, Patch);
-            // Saving to a file
-            switch ((ImgExportFormat)instance.Settings.ImageExportFormat)
-            {
-                case ImgExportFormat.TGA:
-                    scratchImage.SaveToTGAFile(0, OutputFile);
-                    break;
-                case ImgExportFormat.TIFF:
-                    scratchImage.SaveToWICFile(0, 1, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.TIFF), OutputFile);
-                    break;
-                case ImgExportFormat.DDS:
-                    scratchImage.SaveToDDSFile(DDS_FLAGS.NONE, OutputFile);
-                    break;
-                case ImgExportFormat.PNG:
-                    scratchImage.SaveToWICFile(0, 1, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), OutputFile);
-                    break;
-            }
+                AnimExportFormat.CAST => ".cast",
+                AnimExportFormat.SEANIM => ".seanim",
+                AnimExportFormat.XANIM => ".xanim_export",
+                _ => throw new Exception("Invalid export format")
+            };
+            instance.Translator.Save($"{OutputFolder}\\{name}{format}", animation);
         }
 
         public static void ExportBImage(BImage Image, string OutputFile, ImagePatch Patch, VexInstance instance)
