@@ -388,7 +388,7 @@ namespace Vex.Library.Utility
             }
         }
 
-        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes, bool Deathloop)
+        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes)
         {
             using var Stream = new MemoryStream(SkeletonBytes);
             using var Reader = new BinaryReader(Stream);

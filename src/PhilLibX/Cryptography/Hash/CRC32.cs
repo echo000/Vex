@@ -19,7 +19,7 @@
                         }
                         else
                         {
-                            tableTemp = tableTemp >> 1;
+                            tableTemp >>= 1;
                         }
                     }
                     crcValue = (crcValue >> 8) ^ tableTemp;
