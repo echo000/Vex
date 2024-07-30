@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Media;
 using Vex.Library.Utility;
+using VoidAnimation;
 
 namespace Vex.Library.Package
 {
@@ -258,7 +259,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractEntryBytes(SkeletonEntry, instance);
                     //Improve this
-                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
+                    var skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
                     model.Skeleton = skeleton;
                 }
             }
@@ -324,9 +325,16 @@ namespace Vex.Library.Package
             }
         }
 
-        public static void ExportVoidAnimation(Asset asset, VexInstance instance)
+        public void ExportVoidAnimation(Asset asset, VexInstance instance)
         {
-            var animation = Utility.AnimationUtils.ExtractAnimation(asset, instance);
+            var bytes = ExtractEntryBytes(asset, instance);
+
+            //Definitely need a null check here
+            var compressedAnimation = VoidAnimation.AnimationUtils.ExtractAnimation(bytes, instance.Game == SupportedGames.Dishonored2, out var skeletonName);
+            var SkeletonBytes = ExtractEntryBytes(GetEntryFromName(skeletonName), instance);
+            var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
+            var animation = VoidAnimation.AnimationUtils.GetAnimationFromCompressed(compressedAnimation, Skeleton);
+
             var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Animations");
             Directory.CreateDirectory(dir);

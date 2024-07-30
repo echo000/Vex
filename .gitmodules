@@ -1,0 +1,3 @@
+[submodule "src/VoidAnimation"]
+	path = src/VoidAnimation
+	url = https://github.com/echo000/VoidAnimation

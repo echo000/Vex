@@ -4,12 +4,13 @@ Vex is an asset extractor for various titles running on the Void Engine.
 Supported games are Dishonored 2, Death of the Outsider, Deathloop.
 
 This is currently a WIP - Currently supports extracting Models, Materials, Images and RawFiles.
-Animations are WIP
+Animations are WIP - The module that extracts them is currently hidden and won't be released until it's in a more stable state.
+Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
 
 ## Requirements
 
 * Windows 11 x64 or above (Windows 7/8/8.1 should work, but are untested)
-* .NET Core 9
+* .NET Core 9 (Technically would build with .NET 8 but would require some changes)
 * Official copies of the games (only the latest copies from official distributors are tested)
 * General understanding of how to use the assets you want to work with
 

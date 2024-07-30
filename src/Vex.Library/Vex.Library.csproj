@@ -21,6 +21,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PhilLibX\PhilLibX.csproj" />
+    <ProjectReference Include="..\VoidAnimation\VoidAnimation.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DirectXTexNet" Version="1.0.3" />
