@@ -11,7 +11,7 @@ Note that a fresh build will not work due to the lack of animation module, you w
 
 Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
 
-Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, thus would recommend using Cast.
+Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, and would recommend using Cast.
 
 ## Requirements
 
