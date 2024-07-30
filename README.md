@@ -13,6 +13,8 @@ Death of the outsider support is WIP - Some assets fail to extract properly due 
 
 Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, and would recommend using Cast.
 
+Press P to preview Models/Textures in the viewer. (Note that models can take a while to load if loading with textures due to needing to build the textures)
+
 ## Requirements
 
 * Windows 11 x64 or above (Windows 7/8/8.1/10 should work, but are untested)

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PhilLibX.Cryptography.Hash
+﻿namespace PhilLibX.Cryptography.Hash
 {
     public class CRC32
     {
-        public static uint EdgeAnimGenerateNameHash(string name)
+        public static uint VoidAnimGenerateNameHash(string name)
         {
             uint crcValue = ~0U;
 
@@ -16,7 +10,7 @@ namespace PhilLibX.Cryptography.Hash
             {
                 foreach (char c in name)
                 {
-                    uint tableTemp = (uint)((crcValue & 0xFF) ^ (byte)c);
+                    uint tableTemp = (crcValue & 0xFF) ^ (byte)c;
                     for (int bitLoop = 0; bitLoop < 8; bitLoop++)
                     {
                         if ((tableTemp & 0x01) != 0)

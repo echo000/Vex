@@ -57,4 +57,38 @@ namespace Vex.Library
         public int VertexStart;
         public int VertexEnd;
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct VoidSkeletonHeader
+    {
+        public uint Magic;
+        public uint FileSize;
+        public uint CustomDataSize;
+        public uint NameHashesSize;
+        public ushort BoneCount;
+        public ushort UserChannelCount;
+        public ushort Flags;
+        public ushort LocomotionJointIndex;
+        public uint BasePoseOffset;
+        public uint JointLinkageMapOffset;
+        public uint JointNameHashArrayOffset;
+        public uint UserChannelNameHashArrayOffset;
+        public uint UserChannelNodeNameHashArrayOffset;
+        public uint UserChannelFlagsArrayOffset;
+        public uint CustomDataOffset;
+        public uint Padding1;
+        public uint Padding2;
+        public uint JointLinkageCount;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct VoidTransforms
+    {
+        public Vector4 Rotation;
+        //Technically position + scale are Vector4s, but only the XYZ values of each are used
+        public Vector3 Position;
+        public float unk1;
+        public Vector3 Scale;
+        public float unk2;
+    }
 }

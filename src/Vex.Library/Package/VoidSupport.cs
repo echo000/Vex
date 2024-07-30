@@ -259,7 +259,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractEntryBytes(SkeletonEntry, instance);
                     //Improve this
-                    var skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
+                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
                     model.Skeleton = skeleton;
                 }
             }
@@ -332,6 +332,7 @@ namespace Vex.Library.Package
             //Definitely need a null check here
             var compressedAnimation = VoidAnimation.AnimationUtils.ExtractAnimation(bytes, instance.Game == SupportedGames.Dishonored2, out var skeletonName);
             var SkeletonBytes = ExtractEntryBytes(GetEntryFromName(skeletonName), instance);
+            //ModelHelper.BuildVoidSkeleton would also work here
             var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
             var animation = VoidAnimation.AnimationUtils.GetAnimationFromCompressed(compressedAnimation, Skeleton);
 

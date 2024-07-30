@@ -15,7 +15,6 @@ namespace Vex.Library.Utility
         {
             using var ModelStream = new MemoryStream(ModelBytes);
             using var Reader = new BinaryReader(ModelStream);
-
             try
             {
                 var Magic = Reader.ReadFixedString(4);
@@ -208,9 +207,8 @@ namespace Vex.Library.Utility
 
         public static Model BuildDeathloopPreviewModel(byte[] ModelBytes, VexInstance instance, out string SkeletonPath)
         {
-            using var SkeletonStream = new MemoryStream(ModelBytes);
-            using var Reader = new BinaryReader(SkeletonStream);
-
+            using var Stream = new MemoryStream(ModelBytes);
+            using var Reader = new BinaryReader(Stream);
             try
             {
                 var Magic = Reader.ReadUInt32();
@@ -386,7 +384,59 @@ namespace Vex.Library.Utility
             finally
             {
                 Reader.Close();
-                SkeletonStream.Close();
+                Stream.Close();
+            }
+        }
+
+        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes, bool Deathloop)
+        {
+            using var Stream = new MemoryStream(SkeletonBytes);
+            using var Reader = new BinaryReader(Stream);
+            try
+            {
+                var SkeletonHeader = Reader.ReadStruct<VoidSkeletonHeader>();
+                if (SkeletonHeader.Magic != 0x45533036)
+                    throw new Exception();
+
+                var Skeleton = new Skeleton();
+                var jointLinkage = Reader.ReadArray<ushort>((int)SkeletonHeader.JointLinkageCount * 2);
+                var transforms = Reader.ReadArray<VoidTransforms>(SkeletonHeader.BoneCount);
+
+                List<uint> Hashes = [];
+                Reader.Seek(SkeletonHeader.JointNameHashArrayOffset + 0x20);
+                for (int i = 0; i < SkeletonHeader.BoneCount; i++)
+                {
+                    Hashes.Add(Reader.ReadUInt32());
+                }
+
+                //The real bone names are stored in the Custom Data potion of the Skeleton file
+                //However it's never in the same section of the Custom Data, so is not easily accessible
+                //Hashes (JointNameHashArray) are the EdgeAnimGenerateNameHash() of the bone names
+                //First bone EdgeAnimGenerateNameHash("origin") is hashed as 554609121
+                for (int i = 0; i < SkeletonHeader.BoneCount; i++)
+                {
+                    Skeleton.Bones.Add(new($"Bone_{Hashes[i]:x}")
+                    {
+                        BaseLocalTranslation = transforms[i].Position,
+                        BaseLocalRotation = new Quaternion(transforms[i].Rotation.X, transforms[i].Rotation.Y, transforms[i].Rotation.Z, transforms[i].Rotation.W),
+                        BaseScale = transforms[i].Scale
+                    });
+                }
+                for (int i = 0; i < SkeletonHeader.JointLinkageCount; i++)
+                {
+                    ushort idJoint = jointLinkage[2 * i + 0];
+                    ushort idParent = jointLinkage[2 * i + 1];
+                    int parent = (idParent & 0x7fff) >= 0x4000 ? -1 : (idParent & 0x7fff);
+
+                    Skeleton.Bones[idJoint].Parent = parent != -1 ? Skeleton.Bones[parent] : null;
+                }
+                Skeleton.GenerateGlobalTransforms();
+                return Skeleton;
+            }
+            finally
+            {
+                Reader.Close();
+                Stream.Close();
             }
         }
     }
