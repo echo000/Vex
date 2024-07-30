@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -451,7 +450,7 @@ namespace Vex.Pages
         public void RefreshAssets()
         {
             ViewModel.Assets?.Clear();
-            if(Instance.Assets != null)
+            if (Instance.Assets != null)
                 ViewModel.Assets?.AddRange(Instance.Assets);
             ProgressComplete(null);
         }

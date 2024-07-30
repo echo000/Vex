@@ -128,19 +128,19 @@ namespace Vex
                 {
                     material.DiffuseColor = GetRandomColor4();
                 }
-/*                if (mat.Textures.TryGetValue("SpecularMap", out var specHash))
-                {
-                    var image = instance.VoidSupport.GetEntryFromName(imgHash.Name);
-                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
-                    var ms = ImageHelper.ConvertImageToStream(bImage);
-                    material.DiffuseMap = new TextureModel(ms, true);
-                    material.SpecularColorMap = new TextureModel(ms, true);
-                    material.SpecularShininess = 10f;
-                }
-                else
-                {*/
-                    material.SpecularColor = SharpDX.Color.Black;
-                    material.SpecularShininess = 20f;
+                /*                if (mat.Textures.TryGetValue("SpecularMap", out var specHash))
+                                {
+                                    var image = instance.VoidSupport.GetEntryFromName(imgHash.Name);
+                                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
+                                    var ms = ImageHelper.ConvertImageToStream(bImage);
+                                    material.DiffuseMap = new TextureModel(ms, true);
+                                    material.SpecularColorMap = new TextureModel(ms, true);
+                                    material.SpecularShininess = 10f;
+                                }
+                                else
+                                {*/
+                material.SpecularColor = SharpDX.Color.Black;
+                material.SpecularShininess = 20f;
                 //}
             }
 
