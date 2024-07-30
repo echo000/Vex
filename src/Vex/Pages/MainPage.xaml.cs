@@ -56,26 +56,6 @@ namespace Vex.Pages
             Instance.Settings = VexSettings.Load("Settings.vcfg");
 
             InitializeLogging();
-
-            if (Instance.Settings.AutoUpdates)
-            {
-                try
-                {
-                    var TempPath = Path.GetTempPath();
-                    if (TempPath == string.Empty)
-                        return;
-
-                    TryCleanupTemp(TempPath);
-                    var UpdaterPath = Path.Combine(AppContext.BaseDirectory, "VexUpdater.exe");
-                    var NewPath = Path.Combine(TempPath, $"VexUpdater_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds():x}.exe");
-                    File.Copy(UpdaterPath, NewPath);
-                    Process.Start(NewPath, $"echo000 Vex Vex Vex.exe {AppContext.BaseDirectory} true");
-                }
-                catch (Exception)
-                {
-                    // Log(ex.Message, "ERROR");
-                }
-            }
         }
 
         /// <summary>
