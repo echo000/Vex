@@ -121,10 +121,6 @@ namespace Vex.Library.Utility
                     Layout.LAYOUT_32_32_32_32 => 128,
                     Layout.LAYOUT_10_10_10_2 => 32,
                     Layout.LAYOUT_R11G11B10 => 32,
-                    //	case ARK_GFX_FORMAT_LAYOUT_4_4_4_4: return 16;
-                    //	case ARK_GFX_FORMAT_LAYOUT_5_6_5: return 16;
-                    //	case ARK_GFX_FORMAT_LAYOUT_5_5_5_1: return 16;
-                    //TODO find BCn sizes
                     Layout.LAYOUT_BC1 => 4,
                     Layout.LAYOUT_BC2 => 8,
                     Layout.LAYOUT_BC3 => 8,
@@ -132,8 +128,6 @@ namespace Vex.Library.Utility
                     Layout.LAYOUT_BC5 => 8,
                     Layout.LAYOUT_BC6 => 8,
                     Layout.LAYOUT_BC7 => 8,
-                    /*case ARK_GFX_FORMAT_LAYOUT_24_8: return 32;
-                    case ARK_GFX_FORMAT_LAYOUT_16_8: return 32;*/
                     _ => throw new Exception("Invalid Format"),
                 };
             }

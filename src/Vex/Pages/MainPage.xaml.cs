@@ -80,26 +80,6 @@ namespace Vex.Pages
         }
 
         /// <summary>
-        /// Tries to cleanup the temp directory
-        /// </summary>
-        /// <param name="dir">Temp path</param>
-        private static void TryCleanupTemp(string dir)
-        {
-            try
-            {
-                foreach (var filePath in Directory.GetFiles(dir, "VexUpdater*.exe"))
-                {
-                    File.Delete(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions that may occur during file deletion
-                Debug.WriteLine($"Error deleting files: {ex.Message}");
-            }
-        }
-
-        /// <summary>
         /// Exports the asset on double click
         /// </summary>
         private void AssetListMouseDoubleClick(object sender, MouseButtonEventArgs e)
