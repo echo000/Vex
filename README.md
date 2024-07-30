@@ -1,7 +1,7 @@
 # Vex
 
 Vex is an asset extractor for various titles running on the Void Engine.
-Supported games are Dishonored 2, Death of the Outsider, Deathloop.
+Supported games are Dishonored 2, Death of the Outsider (WIP) & Deathloop.
 
 This is currently a WIP - Currently supports extracting Models, Materials, Images and RawFiles.
 
@@ -11,14 +11,16 @@ Note that a fresh build will not work due to the lack of animation module, you w
 
 Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
 
+Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, thus would recommend using Cast.
+
 ## Requirements
 
-* Windows 11 x64 or above (Windows 7/8/8.1 should work, but are untested)
+* Windows 11 x64 or above (Windows 7/8/8.1/10 should work, but are untested)
 * .NET Core 9 (Technically would build with .NET 8 but would require some changes)
 * Official copies of the games (only the latest copies from official distributors are tested)
 * General understanding of how to use the assets you want to work with
 
-The following tools/plugins are required/recommended for some assets/games:
+The following tools/plugins are required/recommended for some assets:
 
 * [Cast](https://github.com/dtzxporter/Cast) by DTZxPorter (.cast) (Autodesk Maya/Blender)
 * [SETools](https://github.com/dtzxporter/SETools) by DTZxPorter (.seanim & .semodel) (Autodesk Maya)
@@ -26,7 +28,6 @@ The following tools/plugins are required/recommended for some assets/games:
 * [io_model_semodel](https://github.com/dtzxporter/io_model_semodel) by DTZxPorter (.semodel) (Blender)
 * [FileTypeDDS](https://github.com/dtzxporter/FileTypeDDS) by DTZxPorter (support in Paint .NET for newer DXGI formats) (Paint .NET)
 * [Intel TextureWorks](https://software.intel.com/en-us/articles/intel-texture-works-plugin) by Intel (DDS + Utils) (Photoshop)
-* [DarkIris](https://aviacreations.com/modme/index.php?view=topic&tid=831) by DTZxPorter (Texture Utils) (Paint .NET)
 * [SEModelViewer](https://github.com/Scobalula/semodelviewer) by Scobalula
 
 ## License/Disclaimers
@@ -38,8 +39,8 @@ This repo is in no shape or form associated with Activision and the developers. 
 ## Credits/Contributors
 
 * [echo000](https://github.com/echo000) - Developer and Maintainer
-* [Scobalula](https://github.com/Scobalula) - Modified version of [PhilLibX](https://github.com/Scobalula/PhilLibX)
-* [DTZxPorter](https://github.com/dtzxporter/) - Help with Research - Porter has been a HUGE help, this entire project wouldn't be possible without his help.
+* [Scobalula](https://github.com/Scobalula) - [PhilLibX](https://github.com/Scobalula/PhilLibX)
+* [DTZxPorter](https://github.com/dtzxporter/) - Help with Research - Porter has been a HUGE help, this entire project wouldn't be possible without him.
 * id-daemon - Game Research
 
 **If you use Vex in any of your projects, it would be highly appreciated if you credit the people/parties listed in the Credits list.**
