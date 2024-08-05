@@ -3,13 +3,13 @@
 Vex is an asset extractor for various titles running on the Void Engine.
 Supported games are Dishonored 2, Death of the Outsider (WIP) & Deathloop.
 
-This is currently a WIP - Currently supports extracting Models, Materials, Images and RawFiles.
+This is a WIP - Currently supports extracting Models, Materials, Images and RawFiles.
 
 Animations are WIP - The module that extracts them is currently hidden and won't be released until it's in a more stable state.
 
 Note that a fresh build will not work due to the lack of animation module, you will need to comment out ExportVoidAnimation in VoidSupport.cs to get it to build.
 
-Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
+Death of the outsider support is WIP - Some assets fail to extract properly due to an unknown compression format.
 
 Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, and would recommend using Cast.
 
