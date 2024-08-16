@@ -166,6 +166,11 @@ namespace Vex.Library.Package
                         {
                             Asset.Type = AssetType.Image;
                         }
+                        else
+                        {
+                            Asset.Type = AssetType.RawFile;
+                            Asset.InformationString = $"Size {FormatFileSize(Asset.AssetSize)}";
+                        }
                         /*                        if (uniqueElements.Add(Asset.EntryType))
                                                 {
                                                     Trace.WriteLine(Asset.EntryType);
@@ -390,6 +395,27 @@ namespace Vex.Library.Package
         {
             Containers.Clear();
             Containers = null;
+        }
+
+        static string FormatFileSize(long sizeInBytes)
+        {
+            const double KB = 1024;
+            const double MB = 1024 * KB;
+
+            if (sizeInBytes < KB)
+            {
+                return $"{sizeInBytes:F2} B";
+            }
+            else if (sizeInBytes < MB)
+            {
+                double sizeInKB = sizeInBytes / KB;
+                return $"{sizeInKB:F2} KB";
+            }
+            else
+            {
+                double sizeInMB = sizeInBytes / MB;
+                return $"{sizeInMB:F2} MB";
+            }
         }
     }
 }

@@ -43,9 +43,7 @@ namespace Vex.Library.Utility
         {
             Parallel.ForEach(material.Textures, (texture) =>
             {
-                var Patch = ImagePatch.NoPatch;
-                if (texture.Key == "NormalMap")
-                    Patch = ImagePatch.Normal_Expand;
+                var Patch = texture.Key == "NormalMap" ? ImagePatch.Normal_Expand : ImagePatch.NoPatch;
                 var path = Path.Combine(ImagesPath, $"{texture.Value.Name}{instance.GetImageExportFormat()}");
                 var ImageAsset = instance.VoidSupport.GetEntryFromName(texture.Value.FilePath);
                 if (ImageAsset != null)

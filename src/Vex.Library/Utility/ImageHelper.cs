@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace Vex.Library.Utility
@@ -68,7 +69,7 @@ namespace Vex.Library.Utility
             return ConvertToFormat(ImageBuffer, patch);
         }
 
-        public static ScratchImage ConvertToFormat(byte[] array, ImagePatch Patch = ImagePatch.NoPatch)
+        static ScratchImage ConvertToFormat(byte[] array, ImagePatch Patch = ImagePatch.NoPatch)
         {
             //Load the ScratchImage from the byte array (need to pin the array)
             //The array pinning etc was taken from:
@@ -113,7 +114,7 @@ namespace Vex.Library.Utility
         /// <param name="MipLevels">Number of Mips</param>
         /// <param name="ImageDataFormat">The format of the image</param>
         /// <returns></returns>
-        public static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, DirectXTexUtility.DXGIFormat ImageDataFormat, bool IsCubemap = false)
+        static byte[] AddDDSHeaderToBytes(byte[] tempBuffer, int ImageWidth, int ImageHeight, int MipLevels, DirectXTexUtility.DXGIFormat ImageDataFormat, bool IsCubemap = false)
         {
             var metadata = DirectXTexUtility.GenerateMataData(ImageWidth, ImageHeight, MipLevels, ImageDataFormat, IsCubemap);
             DirectXTexUtility.GenerateDDSHeader(metadata, DirectXTexUtility.DDSFlags.NONE, out var header, out var dx10h);
@@ -180,14 +181,16 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            for (int y = 0; y < height; y++)
+            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
+
+            Parallel.For(0, height, y =>
             {
-                for (int x = 0; x < width; x++)
+                byte* row = pixelData + (y * rowLength);
+                for (int x = 0; x < rowLength; x += 4)
                 {
-                    int offset = (y * width + x) * 4;
-                    pixelData[offset + 3] = 255;
+                    row[x + 3] = 255; // set alpha channel
                 }
-            }
+            });
         }
 
         private static BitmapImage MakeBitmapImage(UnmanagedMemoryStream ms, int width, int height)
@@ -203,7 +206,7 @@ namespace Vex.Library.Utility
             return bitmapImage;
         }
 
-        public static byte[] Stitch2DMips(BImage image)
+        static byte[] Stitch2DMips(BImage image)
         {
             if (image.m_Opts.m_type != BImage.ImageOptions.TYPE.TT_2D)
                 throw new Exception("The image is not a 2D texture!");
@@ -223,7 +226,7 @@ namespace Vex.Library.Utility
             return [.. result];
         }
 
-        public static byte[] StitchCubemapMips(BImage image)
+        static byte[] StitchCubemapMips(BImage image)
         {
             if (image.m_Opts.m_type != BImage.ImageOptions.TYPE.TT_CUBIC)
                 throw new Exception("The image is not a 2D texture!");

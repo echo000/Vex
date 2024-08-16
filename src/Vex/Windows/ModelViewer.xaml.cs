@@ -108,10 +108,8 @@ namespace Vex
             var material = new PhongMaterial
             {
                 DiffuseColor = SharpDX.Color.White,
-                ReflectiveColor = SharpDX.Color.Black,
-                EmissiveColor = SharpDX.Color.Black,
                 SpecularColor = SharpDX.Color.Black,
-                SpecularShininess = 20f,
+                SpecularShininess = 1f,
             };
 
             foreach (var mat in materials)
@@ -146,10 +144,10 @@ namespace Vex
         private static Color4 GetRandomColor4()
         {
             return new Color4(
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        (byte)RandomInt.Next(128, 255) / 255f,
-                        1);
+                        RandomInt.Next(128, 255) / 255f,
+                        RandomInt.Next(128, 255) / 255f,
+                        RandomInt.Next(128, 255) / 255f,
+                        1f);
         }
 
         private static void ClearBindings(DependencyObject element)

@@ -65,18 +65,16 @@ namespace Vex.Library
         {
             // Determine based on file extension first
             var file = new FileInfo(FileName);
-            var FileExt = file.Extension;
             Assets ??= [];
-
-            switch (FileExt)
+            if (file.Name.Equals("master.index", StringComparison.CurrentCultureIgnoreCase))
             {
-                case ".index":
-                    VoidSupport = new VoidSupport();
-                    VoidSupport.VoidMasterIndex(FileName, this);
-                    VoidSupport.ReloadAssets(this);
-                    break;
-                default:
-                    throw new InvalidFileException();
+                VoidSupport = new VoidSupport();
+                VoidSupport.VoidMasterIndex(FileName, this);
+                VoidSupport.ReloadAssets(this);
+            }
+            else
+            {
+                throw new InvalidFileException();
             }
         }
 

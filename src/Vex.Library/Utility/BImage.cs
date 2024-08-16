@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-//MODIFIED FROM https://github.com/Patapom/GodComplex/blob/6405d5f76fc2694ca081d3d79427f79ea9d009a3/Tools/BImageViewer/BImage.cs
-
 namespace Vex.Library.Utility
 {
     public class BImage
