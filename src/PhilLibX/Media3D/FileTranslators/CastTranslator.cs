@@ -533,6 +533,7 @@ namespace PhilLibX.Media3D.Cast
                 CastBone.SetProperty("wr", CastPropertyId.Vector4, bone.BaseWorldRotation);
                 CastBone.SetProperty("wp", CastPropertyId.Vector3, bone.BaseWorldTranslation);
                 CastBone.SetProperty("s", CastPropertyId.Vector3, bone.BaseScale * scale);
+                CastBone.SetProperty("ssc", CastPropertyId.Byte,bone.CompensateScale ? (byte)1 : (byte)0);
             }
         }
 

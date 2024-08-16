@@ -81,6 +81,8 @@ namespace Vex
         public static GroupModel3D CreateModel(Model model, VexInstance instance)
         {
             var ModelGroup = new GroupModel3D();
+            // Dictionary to cache loaded and converted images
+            var imageCache = new Dictionary<string, TextureModel>();
             foreach (var Mesh in model.Meshes)
             {
                 var geometry = new MeshGeometry3D
@@ -90,60 +92,54 @@ namespace Vex
                     Normals = new Vector3Collection(Mesh.Normals.Select(n => new Vector3(n.X, n.Y, n.Z))),
                     TextureCoordinates = new Vector2Collection(Mesh.Positions.Select((_, i) => new Vector2(Mesh.UVLayers[i, 0].X, Mesh.UVLayers[i, 0].Y)))
                 };
-                var material = CreateMaterial(Mesh.Materials, instance);
+                var material = CreateMaterial(Mesh.Materials, imageCache, instance);
                 var MG = new MeshGeometryModel3D
                 {
                     Geometry = geometry,
-                    Material = material,
+                    Material = material
                 };
                 ModelGroup.Children.Add(MG);
             }
             return ModelGroup;
         }
 
-        private static PhongMaterial CreateMaterial(List<PhilLibX.Media3D.Material> materials, VexInstance instance)
+        private static PhongMaterial CreateMaterial(List<PhilLibX.Media3D.Material> materials, Dictionary<string, TextureModel> imageCache, VexInstance instance)
         {
             var material = new PhongMaterial
             {
                 DiffuseColor = SharpDX.Color.White,
                 ReflectiveColor = SharpDX.Color.Black,
-                EmissiveColor = SharpDX.Color.Black
+                EmissiveColor = SharpDX.Color.Black,
+                SpecularColor = SharpDX.Color.Black,
+                SpecularShininess = 20f,
             };
 
             foreach (var mat in materials)
             {
                 if (mat.Textures.TryGetValue("DiffuseMap", out var Diffuse) && instance.Settings.LoadImagesModel)
                 {
-                    var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
-                    if (image == null)
+                    if (!imageCache.TryGetValue(Diffuse.FilePath, out var texture))
                     {
-                        material.DiffuseColor = GetRandomColor4();
-                        continue;
+                        // Load the image if not already cached
+                        var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
+                        if (image == null)
+                        {
+                            material.DiffuseColor = GetRandomColor4();
+                            continue;
+                        }
+                        var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
+                        var ms = ImageHelper.ConvertImageToStream(bImage, ImagePatch.Color_StripAlpha);
+                        // Create TextureModel and add to cache
+                        texture = new TextureModel(ms, true);
+                        imageCache[Diffuse.FilePath] = texture;
                     }
-                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
-                    var ms = ImageHelper.ConvertImageToStream(bImage);
-                    material.DiffuseMap = new TextureModel(ms, true);
+                    material.DiffuseMap = texture;
                 }
                 else
                 {
                     material.DiffuseColor = GetRandomColor4();
                 }
-                /*                if (mat.Textures.TryGetValue("SpecularMap", out var specHash))
-                                {
-                                    var image = instance.VoidSupport.GetEntryFromName(imgHash.Name);
-                                    var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
-                                    var ms = ImageHelper.ConvertImageToStream(bImage);
-                                    material.DiffuseMap = new TextureModel(ms, true);
-                                    material.SpecularColorMap = new TextureModel(ms, true);
-                                    material.SpecularShininess = 10f;
-                                }
-                                else
-                                {*/
-                material.SpecularColor = SharpDX.Color.Black;
-                material.SpecularShininess = 20f;
-                //}
             }
-
             return material;
         }
 

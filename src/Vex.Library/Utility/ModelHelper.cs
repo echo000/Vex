@@ -183,11 +183,11 @@ namespace Vex.Library.Utility
                 }
 
                 var numMaterials = Reader.ReadInt32();
-                if(numMaterials == 0)
+                if (numMaterials == 0)
                 {
                     var Material = new Material("CastMaterial");
                     ResultModel.Materials.Add(Material);
-                    for(int i = 0; i < ResultModel.Meshes.Count; i++)
+                    for (int i = 0; i < ResultModel.Meshes.Count; i++)
                     {
                         ResultModel.Meshes[i].Materials.Add(Material);
                     }
@@ -396,7 +396,7 @@ namespace Vex.Library.Utility
             }
         }
 
-        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes)
+        public static Skeleton BuildVoidSkeleton(byte[] SkeletonBytes, bool Dishonored)
         {
             using var Stream = new MemoryStream(SkeletonBytes);
             using var Reader = new BinaryReader(Stream);
@@ -411,6 +411,7 @@ namespace Vex.Library.Utility
                 var transforms = Reader.ReadArray<VoidTransforms>(SkeletonHeader.BoneCount);
 
                 List<uint> Hashes = [];
+                List<string> BoneNames = [];
                 Reader.Seek(SkeletonHeader.JointNameHashArrayOffset + 0x20);
                 for (int i = 0; i < SkeletonHeader.BoneCount; i++)
                 {
@@ -419,8 +420,19 @@ namespace Vex.Library.Utility
 
                 //The real bone names are stored in the Custom Data potion of the Skeleton file
                 //However it's never in the same section of the Custom Data, so is not easily accessible
-                //Hashes (JointNameHashArray) are the EdgeAnimGenerateNameHash() of the bone names
-                //First bone EdgeAnimGenerateNameHash("origin") is hashed as 554609121
+                //Looks like there is alignment (at least in the skeleton name) to 4 bytes
+                //Hashes (JointNameHashArray) are the VoidAnimGenerateNameHash() of the bone names
+                //The first bone name is always origin
+                //First bone hash is 554609121: VoidAnimGenerateNameHash("origin")
+                //Seems there can be some data before the names, but it's not always there
+                /*                Reader.Seek(SkeletonHeader.CustomDataOffset + 0x30);
+
+                                if (Dishonored)
+                                    Reader.Advance(4);
+                                var BaseSkeletonName = Reader.ReadFixedPrefixString();
+                                //Align to 4 bytes
+                                Reader.Seek((long)MathHelper.EdgeAlign((ulong)Reader.BaseStream.Position, 4));*/
+
                 for (int i = 0; i < SkeletonHeader.BoneCount; i++)
                 {
                     Skeleton.Bones.Add(new($"Bone_{Hashes[i]:x}")
@@ -437,6 +449,8 @@ namespace Vex.Library.Utility
                     int parent = (idParent & 0x7fff) >= 0x4000 ? -1 : (idParent & 0x7fff);
 
                     Skeleton.Bones[idJoint].Parent = parent != -1 ? Skeleton.Bones[parent] : null;
+                    bool compensateParent = ((idParent & 0x8000) == 0x8000);
+                    Skeleton.Bones[idJoint].CompensateScale = compensateParent;
                 }
                 Skeleton.GenerateGlobalTransforms();
                 return Skeleton;

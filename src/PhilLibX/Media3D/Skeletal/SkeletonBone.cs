@@ -102,13 +102,18 @@ namespace PhilLibX.Media3D
         public bool CanAnimate { get; set; }
 
         /// <summary>
+        /// Gets or Sets if this bone compensates scales from parent.
+        /// </summary>
+        public bool CompensateScale { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="name"></param>
         public SkeletonBone(string name)
         {
             Name = name;
-            Children = new();
+            Children = [];
             CanAnimate = true;
         }
 

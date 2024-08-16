@@ -10,22 +10,6 @@ namespace Vex.Library.Utility
 {
     public class ImageHelper
     {
-        public static BitmapImage ConvertImage(byte[] array, int width, int height)
-        {
-            using var scratchImage = ConvertToFormat(array);
-            PatchAlphaChannel(scratchImage);
-            using var mem = scratchImage.SaveToWICMemory(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG));
-            return MakeBitmapImage(mem, width, height);
-        }
-
-        public static UnmanagedMemoryStream ConvertImageToStream(byte[] array)
-        {
-            using var scratchImage = ConvertToFormat(array);
-            PatchAlphaChannel(scratchImage);
-            var mem = scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
-            return mem;
-        }
-
         public static BitmapImage ConvertImage(BImage Image, ImagePatch patch)
         {
             using var scratchImage = ConvertBImage(Image, patch);
@@ -36,9 +20,24 @@ namespace Vex.Library.Utility
         public static UnmanagedMemoryStream ConvertImageToStream(BImage Image, ImagePatch patch = ImagePatch.NoPatch)
         {
             using var scratchImage = ConvertBImage(Image, patch);
-            PatchAlphaChannel(scratchImage);
-            var mem = scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
-            return mem;
+            return scratchImage.SaveToDDSMemory(0, DDS_FLAGS.NONE);
+        }
+
+        //This is much faster than the above, however it doesn't support patching alpha
+        //When patching the alpha, it first converts the image to RGBA
+        //Then loops through each pixel and sets the alpha to 255 which can be slow
+        public static MemoryStream ConvertImageForModel(BImage Image)
+        {
+            var bytes = Image.m_Slices[0].m_Content;
+            if (Image.m_Opts.m_type == BImage.ImageOptions.TYPE.TT_2D)
+            {
+                if (Image.m_Slices.Length > 0)
+                {
+                    bytes = Stitch2DMips(Image);
+                }
+            }
+            var ImageBuffer = AddDDSHeaderToBytes(bytes, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight, (int)Image.m_Opts.m_curNumLevels, Image.m_Opts.m_format.GetDirectXFormat(), false);
+            return new MemoryStream(ImageBuffer);
         }
 
         public static ScratchImage ConvertBImage(BImage Image, ImagePatch patch)
@@ -98,7 +97,7 @@ namespace Vex.Library.Utility
             {
                 case ImagePatch.Normal_Bumpmap: PatchNormalFromBumpmap(scratchImage); break;
                 case ImagePatch.Normal_Expand: PatchNormalFromCompressed(scratchImage); break;
-                case ImagePatch.Normal_COD_NOG: PatchNormalCODFromNOG(scratchImage); break;
+                case ImagePatch.Unpack_Packed:  break;
                 case ImagePatch.Color_StripAlpha: PatchAlphaChannel(scratchImage); break;
             }
 
@@ -127,129 +126,67 @@ namespace Vex.Library.Utility
             return ImageBuffer;
         }
 
-        public static void PatchNormalFromBumpmap(ScratchImage img)
+        static unsafe void PatchNormalFromBumpmap(ScratchImage img)
         {
-            for (int x = 0; x < img.GetImage(0).Width; x++)
+            var image = img.GetImage(0);
+            var width = image.Width;
+            var height = image.Height;
+
+            byte* pixelData = (byte*)image.Pixels;
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < img.GetImage(0).Height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    // Get Pixel
-                    var pixel = GetPixelValue(img, 0, 0, 0, x, y);
-                    var ResultRedValue = pixel.A;
-                    var ResultGreenValue = pixel.G;
-                    SetPixelValue(img, 0, 0, 0, x, y, new Color(ResultRedValue, ResultGreenValue, 255, 255));
+                    int offset = (y * width + x) * 4;
+                    pixelData[offset] = pixelData[offset + 3];
+                    pixelData[offset + 2] = 255;
+                    pixelData[offset + 3] = 255;
                 }
             }
         }
 
-        public static void PatchNormalFromCompressed(ScratchImage img)
+        static unsafe void PatchNormalFromCompressed(ScratchImage img)
         {
-            for (int x = 0; x < img.GetImage(0).Width; x++)
-            {
-                for (int y = 0; y < img.GetImage(0).Height; y++)
-                {
-                    // Get Pixel
-                    var pixel = GetPixelValue(img, 0, 0, 0, x, y);
+            var image = img.GetImage(0);
+            var width = image.Width;
+            var height = image.Height;
 
-                    var nX = pixel.R / 255.0f;
+            byte* pixelData = (byte*)image.Pixels;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int offset = (y * width + x) * 4;
+
+                    var nX = pixelData[offset] / 255.0f;
                     nX = nX * 2.0f - 1;
-                    var nY = pixel.G / 255.0f;
+                    var nY = pixelData[offset + 1] / 255.0f;
                     nY = nY * 2.0f - 1;
                     var nZ = 0.0f;
                     if (1 - nX * nX - nY * nY > 0) nZ = MathF.Sqrt(1 - nX * nX - nY * nY);
 
                     float ResultBlueVal = Math.Clamp(((nZ + 1) / 2.0f), 0, 1.0f);
 
-                    SetPixelValue(img, 0, 0, 0, x, y, new Color(pixel.R, pixel.G, (byte)(ResultBlueVal * 255), pixel.A));
+                    pixelData[offset + 2] = (byte)(ResultBlueVal * 255);
+                    pixelData[offset + 3] = 255;
                 }
             }
         }
 
-        public static void PatchNormalCODFromNOG(ScratchImage img)
-        {
-            for (int x = 0; x < img.GetImage(0).Width; x++)
-            {
-                for (int y = 0; y < img.GetImage(0).Height; y++)
-                {
-                    // Get Pixel
-                    var pixel = GetPixelValue(img, 0, 0, 0, x, y);
-
-                    var RedValue = pixel.G;
-                    var GreenValue = pixel.A;
-
-                    var nX = RedValue / 255.0f;
-                    nX = nX * 2.0f - 1;
-                    var nY = GreenValue / 255.0f;
-                    nY = nY * 2.0f - 1;
-                    var nZ = 0.0f;
-                    if (1 - nX * nX - nY * nY > 0) nZ = MathF.Sqrt(1 - nX * nX - nY * nY);
-
-                    float ResultBlueVal = Math.Clamp(((nZ + 1) / 2.0f), 0, 1.0f);
-
-                    SetPixelValue(img, 0, 0, 0, x, y, new Color(RedValue, GreenValue, (byte)ResultBlueVal, 255));
-                }
-            }
-        }
-
-        public static void PatchAlphaChannel(ScratchImage img)
-        {
-            for (int x = 0; x < img.GetImage(0).Width; x++)
-            {
-                for (int y = 0; y < img.GetImage(0).Height; y++)
-                {
-                    // Get Pixel
-                    var pixel = GetPixelValue(img, 0, 0, 0, x, y);
-
-                    SetPixelValue(img, 0, 0, 0, x, y, new Color(pixel.R, pixel.G, pixel.B, 255));
-                }
-            }
-        }
-
-        static unsafe Color GetPixelValue(ScratchImage img, int mip, int item, int slice, int x, int y)
-        {
-            var color = new Color();
-            var image = img.GetImage(0);
-            var pixelIndex = ((y * image.Width) + x) * 4;
-            switch (image.Format)
-            {
-                case DXGI_FORMAT.R8G8B8A8_UNORM:
-                    byte* pixelsB = (byte*)image.Pixels;
-                    color.R = pixelsB[pixelIndex + 0];
-                    color.G = pixelsB[pixelIndex + 1];
-                    color.B = pixelsB[pixelIndex + 2];
-                    color.A = pixelsB[pixelIndex + 3];
-                    break;
-                case DXGI_FORMAT.R16G16B16A16_UNORM:
-                    ushort* pixelsS = (ushort*)image.Pixels;
-                    color.R = (byte)(pixelsS[pixelIndex + 0] / 65535.0f);
-                    color.G = (byte)(pixelsS[pixelIndex + 1] / 65535.0f);
-                    color.B = (byte)(pixelsS[pixelIndex + 2] / 65535.0f);
-                    color.A = (byte)(pixelsS[pixelIndex + 3] / 65535.0f);
-                    break;
-                case DXGI_FORMAT.R32G32B32A32_FLOAT:
-                    float* pixels = (float*)image.Pixels;
-                    color.R = (byte)pixels[pixelIndex + 0];
-                    color.G = (byte)pixels[pixelIndex + 1];
-                    color.B = (byte)pixels[pixelIndex + 2];
-                    color.A = (byte)pixels[pixelIndex + 3];
-                    break;
-            }
-            return color;
-        }
-
-        static unsafe void SetPixelValue(ScratchImage img, int mip, int item, int slice, int x, int y, Color color)
+        static unsafe void PatchAlphaChannel(ScratchImage img)
         {
             var image = img.GetImage(0);
-            var pixelIndex = ((y * image.Width) + x) * 4;
-            switch (image.Format)
+            var width = image.Width;
+            var height = image.Height;
+
+            byte* pixelData = (byte*)image.Pixels;
+            for (int y = 0; y < height; y++)
             {
-                case DXGI_FORMAT.R8G8B8A8_UNORM:
-                    byte* pixelsB = (byte*)image.Pixels;
-                    pixelsB[pixelIndex + 0] = color.R;
-                    pixelsB[pixelIndex + 1] = color.G;
-                    pixelsB[pixelIndex + 2] = color.B;
-                    pixelsB[pixelIndex + 3] = color.A;
-                    break;
+                for (int x = 0; x < width; x++)
+                {
+                    int offset = (y * width + x) * 4;
+                    pixelData[offset + 3] = 255;
+                }
             }
         }
 

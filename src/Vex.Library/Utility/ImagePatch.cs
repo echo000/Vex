@@ -14,17 +14,12 @@
         Normal_Bumpmap,
         // Convert a yellow-scale, compressed normalmap to a regular normalmap
         Normal_Expand,
-        // Convert a normal, gloss, and occlusion map to a regular normalmap (Call of Duty: Infinite Warfare)
-        Normal_COD_NOG,
+        // Convert a Deathloop packed map into AO, Roughness, and Metalness maps
+        Unpack_Packed,
 
         // -- Color map patches
 
         // Removes the alpha channel from the colormap
         Color_StripAlpha
     };
-
-    internal class ImageTranslator
-    {
-
-    }
 }

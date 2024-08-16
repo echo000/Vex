@@ -4,7 +4,6 @@ using PhilLibX.IO;
 using PhilLibX.Media3D;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
@@ -167,10 +166,10 @@ namespace Vex.Library.Package
                         {
                             Asset.Type = AssetType.Image;
                         }
-                        if (uniqueElements.Add(Asset.EntryType))
-                        {
-                            Trace.WriteLine(Asset.EntryType);
-                        }
+                        /*                        if (uniqueElements.Add(Asset.EntryType))
+                                                {
+                                                    Trace.WriteLine(Asset.EntryType);
+                                                }*/
                         container.Entries.Add(Asset);
                     }
                 }
@@ -256,7 +255,7 @@ namespace Vex.Library.Package
                 {
                     var SkeletonBytes = ExtractEntryBytes(SkeletonEntry, instance);
                     //Improve this
-                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes);
+                    var skeleton = ModelHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Dishonored2);
                     model.Skeleton = skeleton;
                 }
             }
@@ -330,7 +329,7 @@ namespace Vex.Library.Package
             var compressedAnimation = VoidAnimation.AnimationUtils.ExtractAnimation(bytes, instance.Game == SupportedGames.Dishonored2, out var skeletonName);
             var SkeletonBytes = ExtractEntryBytes(GetEntryFromName(skeletonName), instance);
             //ModelHelper.BuildVoidSkeleton would also work here
-            var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Deathloop);
+            var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Dishonored2);
             var animation = VoidAnimation.AnimationUtils.GetAnimationFromCompressed(compressedAnimation, Skeleton);
 
             var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
