@@ -48,10 +48,6 @@
                                         <ComboBoxItem Content="SEModel"/>
                                         <ComboBoxItem Content="XModel"/>
                                         <ComboBoxItem Content="Cast"/>
-                                        <ComboBoxItem Content="Maya"/>
-                                        <ComboBoxItem Content="OBJ"/>
-                                        <ComboBoxItem Content="SMD"/>
-                                        <ComboBoxItem Content="XNALara ASCII"/>
                                     </ComboBox>
                                 </HeaderedContentControl>
                                 <HeaderedContentControl Header="Animation Format" Foreground="{DynamicResource TextFillColorPrimaryBrush}">

@@ -13,10 +13,6 @@
         SEMODEL,
         XMODEL,
         CAST,
-        MAYA,
-        OBJ,
-        SMD,
-        XNA
     }
 
     public enum SoundExportFormat : byte
