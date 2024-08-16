@@ -134,16 +134,18 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            for (int y = 0; y < height; y++)
+            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
+
+            Parallel.For(0, height, y =>
             {
-                for (int x = 0; x < width; x++)
+                byte* row = pixelData + (y * rowLength);
+                for (int x = 0; x < rowLength; x += 4)
                 {
-                    int offset = (y * width + x) * 4;
-                    pixelData[offset] = pixelData[offset + 3];
-                    pixelData[offset + 2] = 255;
-                    pixelData[offset + 3] = 255;
+                    row[x] = row[x + 3];
+                    row[x + 2] = 255;
+                    row[x + 3] = 255;
                 }
-            }
+            });
         }
 
         static unsafe void PatchNormalFromCompressed(ScratchImage img)
@@ -153,25 +155,25 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int offset = (y * width + x) * 4;
+            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
 
-                    var nX = pixelData[offset] / 255.0f;
+            Parallel.For(0, height, y =>
+            {
+                byte* row = pixelData + (y * rowLength);
+                for (int x = 0; x < rowLength; x += 4)
+                {
+                    var nX = row[x] / 255.0f;
                     nX = nX * 2.0f - 1;
-                    var nY = pixelData[offset + 1] / 255.0f;
+                    var nY = row[x + 1] / 255.0f;
                     nY = nY * 2.0f - 1;
                     var nZ = 0.0f;
+
                     if (1 - nX * nX - nY * nY > 0) nZ = MathF.Sqrt(1 - nX * nX - nY * nY);
-
                     float ResultBlueVal = Math.Clamp(((nZ + 1) / 2.0f), 0, 1.0f);
-
-                    pixelData[offset + 2] = (byte)(ResultBlueVal * 255);
-                    pixelData[offset + 3] = 255;
+                    row[x + 2] = (byte)(ResultBlueVal * 255);
+                    row[x + 3] = 255;
                 }
-            }
+            });
         }
 
         static unsafe void PatchAlphaChannel(ScratchImage img)

@@ -50,6 +50,7 @@ namespace Vex
         public ModelRenderViewModel()
         {
             EffectsManager = new DefaultEffectsManager();
+
             Camera = new PerspectiveCamera()
             {
                 Position = new Point3D(100, 100, 100),
@@ -57,8 +58,11 @@ namespace Vex
                 UpDirection = new Vector3D(0, 0, 1),
                 FieldOfView = 65,
                 NearPlaneDistance = 0.5,
-                FarPlaneDistance = 10000
+                FarPlaneDistance = 100000000
             };
+
+            //Grid = LineBuilder.GenerateGrid(SharpDX.Vector3.Down, -20, 20);
+            //GridTransform = new TranslateTransform3D(0, 0, 0);
 
             var lb = new LineBuilder();
             lb.AddGrid(BoxFaces.Bottom, 40, 40, 80, 80);
