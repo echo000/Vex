@@ -98,7 +98,7 @@ namespace Vex.Library.Utility
             {
                 case ImagePatch.Normal_Bumpmap: PatchNormalFromBumpmap(scratchImage); break;
                 case ImagePatch.Normal_Expand: PatchNormalFromCompressed(scratchImage); break;
-                case ImagePatch.Unpack_Packed:  break;
+                case ImagePatch.Packed_Unpack:  break;
                 case ImagePatch.Color_StripAlpha: PatchAlphaChannel(scratchImage); break;
             }
 
@@ -134,7 +134,7 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
+            int rowLength = width * 4;
 
             Parallel.For(0, height, y =>
             {
@@ -155,7 +155,7 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
+            int rowLength = width * 4;
 
             Parallel.For(0, height, y =>
             {
@@ -183,14 +183,14 @@ namespace Vex.Library.Utility
             var height = image.Height;
 
             byte* pixelData = (byte*)image.Pixels;
-            int rowLength = width * 4; // number of bytes in a row (assuming 4 bytes per pixel)
+            int rowLength = width * 4;
 
             Parallel.For(0, height, y =>
             {
                 byte* row = pixelData + (y * rowLength);
                 for (int x = 0; x < rowLength; x += 4)
                 {
-                    row[x + 3] = 255; // set alpha channel
+                    row[x + 3] = 255;
                 }
             });
         }

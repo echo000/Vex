@@ -155,27 +155,30 @@ namespace PhilLibX.Media3D.Cast
 
                     var Positions = CastMesh.AddProperty("vp", CastPropertyId.Vector3, VertCount * Marshal.SizeOf<Vector3>());
                     var Normals = CastMesh.AddProperty("vn", CastPropertyId.Vector3, VertCount * Marshal.SizeOf<Vector3>());
-                    var Colours = CastMesh.AddProperty("vc", CastPropertyId.Integer32, VertCount * sizeof(int));
                     var Materials = CastMesh.AddProperty("m", CastPropertyId.Integer64, VertCount * sizeof(long));
                     var FaceIndices = CastMesh.AddProperty("f", FaceIndexType, VertCount * sizeof(int));
                     var BoneWeights = CastMesh.AddProperty("wv", CastPropertyId.Float, VertCount * sizeof(int));
                     var BoneIndices = CastMesh.AddProperty("wb", BoneIndexType);
-                    var UVLayer1 = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
-                    var UVLayer2 = CastMesh.AddProperty("u1", CastPropertyId.Vector2, VertCount * sizeof(float));
 
                     if (skeleton != null)
                         CastMesh.SetProperty("mi", CastPropertyId.Byte, (byte)MaxSkinInfluenceBuffer);
+
                     //These models seem to have 2 UV layers
+                    //TODO add a way to create more UV/Colours layers dynamically
+                    //For the time being this will do as it works for now
                     CastMesh.SetProperty("ul", CastPropertyId.Byte, (byte)mesh.UVLayers.Dimension);
+                    var UVLayer1 = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
+                    var UVLayer2 = CastMesh.AddProperty("u1", CastPropertyId.Vector2, VertCount * sizeof(float));
+
+                    CastMesh.SetProperty("cl", CastPropertyId.Byte, mesh.Colours == null ? 0 : (byte)mesh.Colours.Dimension);
+                    var Colours = CastMesh.AddProperty("c0", CastPropertyId.Integer32, VertCount * sizeof(int));
 
                     for (int i = 0; i < VertCount; i++)
                     {
-                        byte[] col = [(byte)255, (byte)255, (byte)255, (byte)255];
-                        if (mesh.Colours != null && mesh.Colours.Count != 0)
-                        {
-                            col = [(byte)mesh.Colours[i].X, (byte)mesh.Colours[i].Y, (byte)mesh.Colours[i].Z, (byte)mesh.Colours[i].W];
-                        }
-                        Colours.Write(BitConverter.ToInt32(col, 0));
+                        int color = (mesh.Colours != null && mesh.Colours.Count > 0)
+                            ? ((byte)mesh.Colours[i].W << 24) | ((byte)mesh.Colours[i].Z << 16) | ((byte)mesh.Colours[i].Y << 8) | (byte)mesh.Colours[i].X
+                            : -1;  // 255, 255, 255, 255
+                        Colours.Write(color);
                         Positions.Write(mesh.Positions[i]);
                         Normals.Write(mesh.Normals[i]);
                         UVLayer1.Write(mesh.UVLayers[i, 0]);

@@ -31,8 +31,8 @@ namespace Vex.Library.Utility
 
             string format = (MdlExportFormat)instance.Settings.ModelExportFormat switch
             {
-                MdlExportFormat.XMODEL => ".xmodel_export",
                 MdlExportFormat.SEMODEL => ".semodel",
+                MdlExportFormat.XMODEL => ".xmodel_export",
                 MdlExportFormat.CAST => ".cast",
                 _ => throw new Exception("Invalid export format")
             };

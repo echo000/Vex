@@ -69,7 +69,7 @@ namespace Vex.Library.Utility
                             var position = Reader.ReadStruct<Vector3>();
                             Mesh.Positions.Add(position);
                             //Add vertex colours as they are not in MM6?
-                            Mesh.Colours.Add(Vector4.One);
+                            Mesh.Colours.Add(Vector4.One * 255);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
                         {
@@ -143,7 +143,7 @@ namespace Vex.Library.Utility
                             Mesh.Normals.Add(new Vector3((sbyte)normal[0], (sbyte)normal[1], (sbyte)normal[2]) / 127f);
                             var tangent = Reader.ReadBytes(4); // Currently doing nothing with this
                             var colours = Reader.ReadBytes(4);
-                            Mesh.Colours.Add(new Vector4(colours[0], colours[1], colours[2], colours[3]) / 255f);
+                            Mesh.Colours.Add(new Vector4(colours[0], colours[1], colours[2], colours[3]));
                         }
                     }
 

@@ -3,15 +3,11 @@
 Vex is an asset extractor for various titles running on the Void Engine.
 Supported games are Dishonored 2, Death of the Outsider (WIP) & Deathloop.
 
-This is currently a WIP - Currently supports extracting Models, Materials, Images and RawFiles.
-
 Animations are WIP - The module that extracts them is currently hidden and won't be released until it's in a more stable state.
 
 Note that a fresh build will not work due to the lack of animation module, you will need to comment out ExportVoidAnimation in VoidSupport.cs to get it to build.
 
 Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
-
-Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, and would recommend using Cast.
 
 Press P to preview Models/Textures in the viewer. (Note that models can take a while to load if loading with textures due to needing to build the textures)
 
@@ -32,11 +28,13 @@ The following tools/plugins are required/recommended for some assets:
 * [Intel TextureWorks](https://software.intel.com/en-us/articles/intel-texture-works-plugin) by Intel (DDS + Utils) (Photoshop)
 * [SEModelViewer](https://github.com/Scobalula/semodelviewer) by Scobalula
 
+Note that SEModel/Anim plugins are not directly supported in Maya or Blender anymore, and would recommend using Cast.
+
 ## License/Disclaimers
 
 Vex is licensed under the General Public License 3.0, you are free to use Vex, both it and its source code, under the terms of the GPL. Vex is distributed in the hope it will be useful to, but it comes WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, see the LICENSE file for more information.
 
-This repo is in no shape or form associated with Activision and the developers. These tools are developed to allow users access to assets for use in 3D art such as YouTube thumbnails, etc. The assets extracted by these tools are property of their respective owners and what you do with the assets is your own responsbility.
+This repo is in no shape or form associated with Arkane, Activision, Bethesda and the developers. These tools are developed to allow users access to assets for use in 3D art such as YouTube thumbnails, etc. The assets extracted by these tools are property of their respective owners and what you do with the assets is your own responsbility.
 
 ## Credits/Contributors
 

@@ -21,7 +21,6 @@ namespace Vex.Library.Package
         {
             { "baseModel", AssetType.Model },
             { "model", AssetType.Model },
-            { "skeleton", AssetType.RawFile },
             { "anim", AssetType.Animation },
             { "material", AssetType.Material },
         };

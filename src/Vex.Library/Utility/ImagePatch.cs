@@ -15,7 +15,7 @@
         // Convert a yellow-scale, compressed normalmap to a regular normalmap
         Normal_Expand,
         // Convert a Deathloop packed map into AO, Roughness, and Metalness maps
-        Unpack_Packed,
+        Packed_Unpack,
 
         // -- Color map patches
 
