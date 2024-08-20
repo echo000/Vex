@@ -170,7 +170,7 @@ namespace PhilLibX.Media3D.Cast
                     var UVLayer1 = CastMesh.AddProperty("u0", CastPropertyId.Vector2, VertCount * sizeof(float));
                     var UVLayer2 = CastMesh.AddProperty("u1", CastPropertyId.Vector2, VertCount * sizeof(float));
 
-                    CastMesh.SetProperty("cl", CastPropertyId.Byte, mesh.Colours == null ? 0 : (byte)mesh.Colours.Dimension);
+                    CastMesh.SetProperty("cl", CastPropertyId.Byte, mesh.Colours == null ? (byte)1 : (byte)mesh.Colours.Dimension);
                     var Colours = CastMesh.AddProperty("c0", CastPropertyId.Integer32, VertCount * sizeof(int));
 
                     for (int i = 0; i < VertCount; i++)
