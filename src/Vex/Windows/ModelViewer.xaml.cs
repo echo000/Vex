@@ -122,7 +122,7 @@ namespace Vex
                         var image = instance.VoidSupport.GetEntryFromName(Diffuse.FilePath);
                         if (image == null)
                         {
-                            material.DiffuseColor = GetRandomColor4();
+                            material.DiffuseColor = SharpDX.Color.White;
                             continue;
                         }
                         var bImage = instance.VoidSupport.GetBImageFromAsset(image, instance);
@@ -135,19 +135,10 @@ namespace Vex
                 }
                 else
                 {
-                    material.DiffuseColor = GetRandomColor4();
+                    material.DiffuseColor = SharpDX.Color.White;
                 }
             }
             return material;
-        }
-
-        private static Color4 GetRandomColor4()
-        {
-            return new Color4(
-                        RandomInt.Next(128, 255) / 255f,
-                        RandomInt.Next(128, 255) / 255f,
-                        RandomInt.Next(128, 255) / 255f,
-                        1f);
         }
 
         private static void ClearBindings(DependencyObject element)

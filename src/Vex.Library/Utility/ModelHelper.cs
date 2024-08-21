@@ -271,13 +271,15 @@ namespace Vex.Library.Utility
                         {
                             var position = Reader.ReadStruct<Vector3>();
                             Mesh.Positions.Add(position);
-                            Mesh.Colours.Add(Vector4.One);
+                            Mesh.Colours.Add(Vector4.One * 255);
                         }
                         for (int v = 0; v < Header.VertexCount; v++)
                         {
-                            var UVU = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
+                            var UVU = new Vector2(
+                                (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
+                            var UVV = new Vector2(
+                                (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             Mesh.UVLayers.Add(UVU, v);
                             Mesh.UVLayers.Add(UVV, v);
@@ -333,9 +335,11 @@ namespace Vex.Library.Utility
                         {
                             var Position = Reader.ReadStruct<Vector3>();
                             Mesh.Positions.Add(Position);
-                            var UVU = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
+                            var UVU = new Vector2(
+                                (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
-                            var UVV = new Vector2((float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
+                            var UVV = new Vector2(
+                                (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()),
                                 (float)BitConverter.Int16BitsToHalf(Reader.ReadInt16()));
                             Mesh.UVLayers.Add(UVU, v);
                             Mesh.UVLayers.Add(UVV, v);

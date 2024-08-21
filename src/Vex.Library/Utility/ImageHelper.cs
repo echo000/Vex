@@ -78,18 +78,19 @@ namespace Vex.Library.Utility
             IntPtr pixelPtr = gcHandle.AddrOfPinnedObject();
             var scratchImage = TexHelper.Instance.LoadFromDDSMemory(pixelPtr, array.Length, DDS_FLAGS.NONE);
             gcHandle.Free();
+            var format = scratchImage.GetMetadata().Format;
 
             // Stage 1: Check if the image is planar, if so, convert to a single plane
-            if (TexHelper.Instance.IsPlanar(scratchImage.GetMetadata().Format))
+            if (TexHelper.Instance.IsPlanar(format))
             {
                 scratchImage = scratchImage.ConvertToSinglePlane();
             }
             // Stage 2: Decompress the texture if necessary, or ensure it's in the proper format
-            if (TexHelper.Instance.IsCompressed(scratchImage.GetMetadata().Format))
+            if (TexHelper.Instance.IsCompressed(format))
             {
                 scratchImage = scratchImage.Decompress(DXGI_FORMAT.R8G8B8A8_UNORM);
             }
-            else if (scratchImage.GetMetadata().Format != DXGI_FORMAT.R8G8B8A8_UNORM)
+            else if (format != DXGI_FORMAT.R8G8B8A8_UNORM)
             {
                 scratchImage = scratchImage.Convert(DXGI_FORMAT.R8G8B8A8_UNORM, TEX_FILTER_FLAGS.DEFAULT, 0.5f);
             }
