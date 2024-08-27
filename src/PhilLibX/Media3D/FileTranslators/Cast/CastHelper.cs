@@ -23,6 +23,7 @@ namespace PhilLibX.Media3D.FileTranslators.Cast
         Material = 0x6C74616D,
         File = 0x656C6966,
         Instance = 0x74736E69,
+        Metadata = 0x6174656D,
     }
 
     public enum CastPropertyId : ushort

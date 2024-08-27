@@ -86,9 +86,7 @@ namespace Vex.Library
     {
         public Vector4 Rotation;
         //Technically position + scale are Vector4s, but only the XYZ values of each are used
-        public Vector3 Position;
-        public float unk1;
-        public Vector3 Scale;
-        public float unk2;
+        public Vector4 Position;
+        public Vector4 Scale;
     }
 }

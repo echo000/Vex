@@ -11,6 +11,7 @@ namespace Vex.Library.Utility
 {
     public class ImageHelper
     {
+        //For texture preview
         public static BitmapImage ConvertImage(BImage Image, ImagePatch patch)
         {
             using var scratchImage = ConvertBImage(Image, patch);
@@ -18,6 +19,7 @@ namespace Vex.Library.Utility
             return MakeBitmapImage(mem, (int)Image.m_Opts.m_curWidth, (int)Image.m_Opts.m_curHeight);
         }
 
+        //For model texture preview
         public static UnmanagedMemoryStream ConvertImageToStream(BImage Image, ImagePatch patch = ImagePatch.NoPatch)
         {
             using var scratchImage = ConvertBImage(Image, patch);
@@ -27,6 +29,7 @@ namespace Vex.Library.Utility
         //This is much faster than the above, however it doesn't support patching alpha
         //When patching the alpha, it first converts the image to RGBA
         //Then loops through each pixel and sets the alpha to 255 which can be slow
+        //It is possible to set transparent ModelGroups, however some of these don't work 100% of the time
         public static MemoryStream ConvertImageForModel(BImage Image)
         {
             var bytes = Image.m_Slices[0].m_Content;

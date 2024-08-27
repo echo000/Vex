@@ -441,9 +441,9 @@ namespace Vex.Library.Utility
                 {
                     Skeleton.Bones.Add(new($"Bone_{Hashes[i]:x}")
                     {
-                        BaseLocalTranslation = transforms[i].Position,
+                        BaseLocalTranslation = new Vector3(transforms[i].Position.X, transforms[i].Position.Y, transforms[i].Position.Z),
                         BaseLocalRotation = new Quaternion(transforms[i].Rotation.X, transforms[i].Rotation.Y, transforms[i].Rotation.Z, transforms[i].Rotation.W),
-                        BaseScale = transforms[i].Scale
+                        BaseScale = new Vector3(transforms[i].Scale.X, transforms[i].Scale.Y, transforms[i].Scale.Z)
                     });
                 }
                 for (int i = 0; i < SkeletonHeader.JointLinkageCount; i++)

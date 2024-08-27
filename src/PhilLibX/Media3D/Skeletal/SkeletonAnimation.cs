@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 
 namespace PhilLibX.Media3D
 {
@@ -44,6 +45,23 @@ namespace PhilLibX.Media3D
             Skeleton = skeleton;
             Targets = new(targetCount);
             TransformType = type;
+        }
+
+
+        public void ScaleAnimation(float factor)
+        {
+            foreach (var target in Targets)
+            {
+                if (target.TranslationFrames != null)
+                {
+                    for (int i = 0; i < target.TranslationFrames.Count; i++)
+                    {
+                        var frame = target.TranslationFrames[i];
+                        var scaledValue = new Vector3(frame.Value.X * factor, frame.Value.Y * factor, frame.Value.Z * factor);
+                        target.TranslationFrames[i] = new(frame.Time, scaledValue);
+                    }
+                }
+            }
         }
 
         /// <summary>

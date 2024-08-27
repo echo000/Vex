@@ -174,7 +174,10 @@ namespace Vex.Library.Package
                                                 {
                                                     Trace.WriteLine(Asset.EntryType);
                                                 }*/
-                        container.Entries.Add(Asset);
+                        if (Asset.AssetSize > 0)
+                        {
+                            container.Entries.Add(Asset);
+                        }
                     }
                 }
                 finally
@@ -221,10 +224,6 @@ namespace Vex.Library.Package
 
         public ImageSource BuildPreviewImage(Asset asset, VexInstance instance)
         {
-            if (asset.AssetSize == 0)
-            {
-                return null;
-            }
             var output = ExtractEntryBytes(asset, instance);
             var img = new BImage(output, Path.GetFileName(asset.Destination), instance);
             ImagePatch patch = ImagePatch.NoPatch;
@@ -238,10 +237,6 @@ namespace Vex.Library.Package
 
         public BImage GetBImageFromAsset(Asset asset, VexInstance instance)
         {
-            if (asset.AssetSize == 0)
-            {
-                return null;
-            }
             var output = ExtractEntryBytes(asset, instance);
             var img = new BImage(output, Path.GetFileName(asset.Destination), instance);
             return img;
@@ -251,6 +246,7 @@ namespace Vex.Library.Package
         {
             var output = ExtractEntryBytes(asset, instance);
             var model = instance.Game == SupportedGames.Dishonored2 ? ModelHelper.BuildDishonoredPreviewModel(output, instance, out string SkeletonPath) : ModelHelper.BuildDeathloopPreviewModel(output, instance, out SkeletonPath);
+            //Why is this being done here instead of in the buildmodel function?
             if (!string.IsNullOrWhiteSpace(SkeletonPath))
             {
                 var SkeletonEntry = Containers.SelectMany(c => c.Entries)
@@ -335,6 +331,10 @@ namespace Vex.Library.Package
             //ModelHelper.BuildVoidSkeleton would also work here
             var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Dishonored2);
             var animation = VoidAnimation.AnimationUtils.GetAnimationFromCompressed(compressedAnimation, Skeleton);
+
+            //This one line of code fixes every issue I've had with animations...
+            //I've never felt so stupid
+            animation.SkeletonAnimation.ScaleAnimation(100.0f);
 
             var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
             var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Animations");

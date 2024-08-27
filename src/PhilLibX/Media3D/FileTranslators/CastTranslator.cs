@@ -88,6 +88,9 @@ namespace PhilLibX.Media3D.Cast
             input.TryGetFirstSkeleton(out var skeleton);
             using var Writer = new BinaryWriter(stream, Encoding.Default, true);
             CastNode CastRoot = new();
+            var meta = CastRoot.AddNode(CastNodeID.Metadata);
+            meta.SetProperty("a", "echo000");
+            meta.SetProperty("s", "Vex");
 
             if (data != null)
             {
