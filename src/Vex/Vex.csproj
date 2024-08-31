@@ -41,7 +41,6 @@
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="GreyhoundEnhanced.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md">
@@ -54,9 +53,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="GreyhoundEnhanced.ico" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="5.7.0">
