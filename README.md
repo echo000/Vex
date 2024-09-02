@@ -3,11 +3,9 @@
 Vex is an asset extractor for various titles running on the Void Engine.
 Supported games are Dishonored 2, Death of the Outsider (WIP) & Deathloop.
 
-Animations are WIP - The module that extracts them is currently hidden and won't be released until it's in a more stable state.
+This is not currently being worked on as it has been re-written in Rust.
 
 Note that a fresh build will not work due to the lack of animation module, you will need to comment out ExportVoidAnimation in VoidSupport.cs to get it to build.
-
-Death of the outsider support is WIP - Some assets fail to extract properly due to the compression format.
 
 Press P to preview Models/Textures in the viewer. (Note that models can take a while to load if loading with textures due to needing to build the textures)
 
